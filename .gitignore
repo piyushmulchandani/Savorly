@@ -42,6 +42,7 @@ gradle-app/
 .settings/
 *.springBeans
 .vscode/
+*.md
 
 # Ignore security and environment files
 .env
@@ -49,10 +50,6 @@ gradle-app/
 *.key
 *.pem
 *.crt
-application.properties
-application.yml
-application-dev.properties
-application-prod.properties
 
 # Ignore SonarCloud and code coverage reports
 /.sonar/
@@ -62,6 +59,7 @@ application-prod.properties
 # Ignore database files
 *.h2.db
 *.mv.db
+*.trace.db
 
 # Ignore generated QueryDSL files
 /target/generated-sources/
