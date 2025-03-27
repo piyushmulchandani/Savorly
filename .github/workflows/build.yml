@@ -36,7 +36,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build with Maven and Generate Coverage Report
-        run: mvn clean verify
+        run: mvn clean verify jacoco:report
 
       - name: Run SonarQube analysis
         env:

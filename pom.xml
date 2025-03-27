@@ -225,6 +225,13 @@
                         -javaagent:${settings.localRepository}/org/mockito/mockito-core/5.15.2/mockito-core-5.15.2.jar
                         -Xshare:off
                     </argLine>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/IT*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
