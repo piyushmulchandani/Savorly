@@ -261,20 +261,19 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
                 <executions>
-                    <!-- Prepares the property pointing to the JaCoCo runtime agent which
-                        is passed as VM argument when Maven the Surefire plugin is executed. -->
+                    <!-- Unit Test Coverage Setup -->
                     <execution>
                         <id>pre-unit-test</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <!-- Sets the path to the file which contains the execution data. -->
                             <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
-                            <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
                             <propertyName>surefireArgLine</propertyName>
                         </configuration>
                     </execution>
+
+                    <!-- Unit Test Report Generation -->
                     <execution>
                         <id>post-unit-test</id>
                         <phase>test</phase>
@@ -282,15 +281,16 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <!-- Sets the path to the file which contains the execution data. -->
                             <dataFile>${project.build.directory}/jacoco-ut.exec</dataFile>
-                            <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
                         </configuration>
                     </execution>
 
-                    <!-- Prepares the property pointing to the JaCoCo runtime agent which
-                        is passed as VM argument when Maven the Failsafe plugin is executed. -->
+                    <!-- Integration Test Coverage Setup -->
                     <execution>
                         <id>pre-integration-test</id>
                         <phase>pre-integration-test</phase>
@@ -298,23 +298,62 @@
                             <goal>prepare-agent-integration</goal>
                         </goals>
                         <configuration>
-                            <!-- Sets the path to the file which contains the execution data. -->
                             <destFile>${project.build.directory}/jacoco-it.exec</destFile>
-                            <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
                             <propertyName>failsafeArgLine</propertyName>
                         </configuration>
                     </execution>
+
+                    <!-- Integration Test Report Generation -->
                     <execution>
                         <id>post-integration-test</id>
-                        <phase>post-integration-test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <!-- Sets the path to the file which contains the execution data. -->
                             <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
-                            <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                        </configuration>
+                    </execution>
+
+                    <!-- Merge all coverage data -->
+                    <execution>
+                        <id>merge-results</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+                        </configuration>
+                    </execution>
+
+                    <!-- Generate final merged report -->
+                    <execution>
+                        <id>post-merge-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
                         </configuration>
                     </execution>
                 </executions>

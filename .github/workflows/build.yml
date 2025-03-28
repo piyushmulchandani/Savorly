@@ -44,4 +44,4 @@ jobs:
         run: |
           mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=piyushmulchandani_Savorly \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco-ut.xml,target/site/jacoco/jacoco-it.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
