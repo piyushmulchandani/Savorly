@@ -5,6 +5,4 @@ public enum SavorlyRole {
     ADMIN,
     RESTAURANT_ADMIN,
     RESTAURANT_WORKER
-
-
 }

@@ -1,11 +1,14 @@
 package com.application.savorly.domain.entity;
 
 import com.application.savorly.domain.catalog.SavorlyRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,8 +25,17 @@ public class SavorlyUser {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Enumerated(EnumType.STRING)
     private SavorlyRole role;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date lastLogonDate;
+
+    @ManyToOne(fetch = FetchType.EAGER) // Needed frequently
+    @JoinColumn(name = "restaurant_id")
+    @JsonIgnore
+    private Restaurant restaurant; // Nullable because not all users work in a restaurant
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Reservation> reservations = new ArrayList<>();
 }
