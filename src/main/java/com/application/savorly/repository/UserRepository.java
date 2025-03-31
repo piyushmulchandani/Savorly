@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<SavorlyUser, Long>, QuerydslPredicateExecutor<SavorlyUser> {
     Optional<SavorlyUser> findByUsernameIgnoreCase(String username);
-
-
 }
