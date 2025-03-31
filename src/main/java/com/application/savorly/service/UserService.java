@@ -3,8 +3,8 @@ package com.application.savorly.service;
 import com.application.savorly.config.exceptions.NotFoundException;
 import com.application.savorly.domain.entity.QSavorlyUser;
 import com.application.savorly.domain.entity.SavorlyUser;
-import com.application.savorly.dto.UserDto;
-import com.application.savorly.dto.UserSearchParamsDto;
+import com.application.savorly.dto.modify.UserModificationDto;
+import com.application.savorly.dto.search.UserSearchDto;
 import com.application.savorly.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -37,10 +37,10 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void createUser(UserDto userDto) {
+    public void createUser(UserModificationDto userModificationDto) {
         SavorlyUser savorlyUser = SavorlyUser.builder()
-                .username(userDto.getUsername())
-                .role(userDto.getRole())
+                .username(userModificationDto.getUsername())
+                .role(userModificationDto.getRole())
                 .lastLogonDate(new Date())
                 .build();
 
@@ -60,24 +60,28 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<SavorlyUser> searchUsersBy(UserSearchParamsDto userSearchParamsDto) {
-        Predicate predicate = getWhere(userSearchParamsDto);
+    public List<SavorlyUser> searchUsersBy(UserSearchDto userSearchDto) {
+        Predicate predicate = getWhere(userSearchDto);
         return (List<SavorlyUser>) userRepository.findAll(predicate);
     }
 
-    public void updateUser(SavorlyUser user, UserDto userDto) {
-        user.setRole(userDto.getRole());
+    public void updateUser(SavorlyUser user, UserModificationDto userModificationDto) {
+        user.setRole(userModificationDto.getRole());
+        //TODO modify user's restaurant
 
         userRepository.save(user);
     }
 
-    private Predicate getWhere(UserSearchParamsDto userSearchParamsDto) {
+    private Predicate getWhere(UserSearchDto userSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
-        if (userSearchParamsDto.getUsername() != null) {
-            where.and(QSavorlyUser.savorlyUser.username.eq(userSearchParamsDto.getUsername()));
+        if (userSearchDto.getUsername() != null) {
+            where.and(QSavorlyUser.savorlyUser.username.eq(userSearchDto.getUsername()));
         }
-        if (userSearchParamsDto.getRole() != null) {
-            where.and(QSavorlyUser.savorlyUser.role.eq(userSearchParamsDto.getRole()));
+        if (userSearchDto.getRole() != null) {
+            where.and(QSavorlyUser.savorlyUser.role.eq(userSearchDto.getRole()));
+        }
+        if(userSearchDto.getRestaurantName() != null) {
+            where.and((QSavorlyUser.savorlyUser.restaurant.name.eq(userSearchDto.getRestaurantName())));
         }
 
         return where;

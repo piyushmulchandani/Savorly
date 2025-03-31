@@ -5,9 +5,9 @@ import com.application.savorly.config.interfaces.hasAdminRole;
 import com.application.savorly.config.interfaces.hasAnyRole;
 import com.application.savorly.domain.catalog.SavorlyRole;
 import com.application.savorly.domain.entity.SavorlyUser;
-import com.application.savorly.dto.UserDto;
-import com.application.savorly.dto.UserResponse;
-import com.application.savorly.dto.UserSearchParamsDto;
+import com.application.savorly.dto.response.UserResponseDto;
+import com.application.savorly.dto.modify.UserModificationDto;
+import com.application.savorly.dto.search.UserSearchDto;
 import com.application.savorly.mapper.UserMapper;
 import com.application.savorly.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class UserFacade {
             SavorlyUser user = userService.findUserByUsername(username);
             userService.login(user);
         } catch (Exception e) {
-            userService.createUser(UserDto.builder()
+            userService.createUser(UserModificationDto.builder()
                     .username(username)
                     .role(SavorlyRole.USER)
                     .build());
@@ -47,7 +47,7 @@ public class UserFacade {
     }
 
     @hasAnyRole
-    public UserResponse getAuthenticatedUser() {
+    public UserResponseDto getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
@@ -55,19 +55,19 @@ public class UserFacade {
     }
 
     @hasAdminRole
-    public List<UserResponse> searchUsersBy(UserSearchParamsDto userSearchParamsDto) {
-        List<SavorlyUser> users = userService.searchUsersBy(userSearchParamsDto);
+    public List<UserResponseDto> searchUsersBy(UserSearchDto userSearchDto) {
+        List<SavorlyUser> users = userService.searchUsersBy(userSearchDto);
 
         return userMapper.usersToUserResponses(users);
     }
 
     @hasAnyRole
-    public void updateUser(UserDto userDto) {
-        if (userDto.getUsername() == null) {
+    public void updateUser(UserModificationDto userModificationDto) {
+        if (userModificationDto.getUsername() == null) {
             throw new BadRequestException("Username cannot be empty");
         }
 
-        SavorlyUser user = userService.findUserByUsername(userDto.getUsername());
-        userService.updateUser(user, userDto);
+        SavorlyUser user = userService.findUserByUsername(userModificationDto.getUsername());
+        userService.updateUser(user, userModificationDto);
     }
 }

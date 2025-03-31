@@ -28,7 +28,7 @@ public class Order {
     private OrderType type;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "table_id", nullable = false)  // Order belongs to one Table
+    @JoinColumn(name = "table_id", nullable = false)
     private Table table;
 
     @ManyToMany(fetch = FetchType.LAZY)

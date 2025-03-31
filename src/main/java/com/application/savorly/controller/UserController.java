@@ -1,8 +1,8 @@
 package com.application.savorly.controller;
 
-import com.application.savorly.dto.UserDto;
-import com.application.savorly.dto.UserResponse;
-import com.application.savorly.dto.UserSearchParamsDto;
+import com.application.savorly.dto.modify.UserModificationDto;
+import com.application.savorly.dto.response.UserResponseDto;
+import com.application.savorly.dto.search.UserSearchDto;
 import com.application.savorly.facade.UserFacade;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -39,20 +39,20 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public UserResponse getCurrentUser() {
+    public UserResponseDto getCurrentUser() {
         return userFacade.getAuthenticatedUser();
     }
 
     @GetMapping("")
-    public List<UserResponse> getAllUsers(
-            @ParameterObject @Valid UserSearchParamsDto userSearchParamsDto
+    public List<UserResponseDto> getAllUsers(
+            @ParameterObject @Valid UserSearchDto userSearchDto
     ) {
-        return userFacade.searchUsersBy(userSearchParamsDto);
+        return userFacade.searchUsersBy(userSearchDto);
     }
 
     @PatchMapping("")
     public void updateUser(
-            @RequestBody UserDto userDto
+            @RequestBody UserModificationDto userDto
     ) {
         userFacade.updateUser(userDto);
     }

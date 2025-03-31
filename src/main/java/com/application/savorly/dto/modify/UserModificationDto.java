@@ -1,21 +1,21 @@
-package com.application.savorly.dto;
+package com.application.savorly.dto.modify;
 
 import com.application.savorly.domain.catalog.SavorlyRole;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class UserModificationDto {
 
+    @NotNull
     private String username;
     private SavorlyRole role;
-    private Date lastLogonDate;
+    private String restaurantName;
 
 }

@@ -29,4 +29,8 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.EAGER) // A reservation always belongs to a restaurant
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "table_id", nullable = false) // Associate each reservation with a table
+    private Table table;
 }

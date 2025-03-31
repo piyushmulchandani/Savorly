@@ -3,9 +3,11 @@ package com.application.savorly.controller;
 import com.application.savorly.SavorlyApplication;
 import com.application.savorly.config.interfaces.WithMockCustomUser;
 import com.application.savorly.domain.catalog.SavorlyRole;
+import com.application.savorly.domain.entity.Restaurant;
 import com.application.savorly.domain.entity.SavorlyUser;
-import com.application.savorly.dto.UserDto;
-import com.application.savorly.dto.UserResponse;
+import com.application.savorly.dto.response.UserResponseDto;
+import com.application.savorly.dto.modify.UserModificationDto;
+import com.application.savorly.repository.RestaurantRepository;
 import com.application.savorly.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +52,9 @@ class UserControllerIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
 
     @MockitoBean
     private Keycloak keycloak;
@@ -122,7 +127,7 @@ class UserControllerIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        UserResponse response = objectMapper.readValue(actual.getResponse().getContentAsString(), UserResponse.class);
+        UserResponseDto response = objectMapper.readValue(actual.getResponse().getContentAsString(), UserResponseDto.class);
         assertEquals("testUser", response.getUsername());
         assertEquals(SavorlyRole.USER, response.getRole());
     }
@@ -158,7 +163,7 @@ class UserControllerIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<UserResponse> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
+        List<UserResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertThat(response).hasSize(2);
     }
@@ -166,24 +171,31 @@ class UserControllerIT {
     @Test
     @WithMockCustomUser(role = "admin")
     void shouldSearchUsersByFilter() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurantRepository.save(restaurant);
+
         SavorlyUser user1 = SavorlyUser.builder()
                 .username("user1")
                 .role(SavorlyRole.USER)
                 .build();
         SavorlyUser user2 = SavorlyUser.builder()
                 .username("user2")
-                .role(SavorlyRole.ADMIN)
+                .role(SavorlyRole.RESTAURANT_ADMIN)
+                .restaurant(restaurant)
                 .build();
         userRepository.saveAll(List.of(user1, user2));
 
         MvcResult actual = mockMvc.perform(get("/api/v1/users")
-                        .queryParam("role", SavorlyRole.ADMIN.toString())
+                        .queryParam("role", SavorlyRole.RESTAURANT_ADMIN.toString())
                         .queryParam("username", "user2")
+                        .queryParam("restaurantName", "Restaurant")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<UserResponse> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
+        List<UserResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertThat(response).hasSize(1);
     }
@@ -197,7 +209,7 @@ class UserControllerIT {
                 .build();
         userRepository.save(user);
 
-        UserDto updatedUser = UserDto.builder()
+        UserModificationDto updatedUser = UserModificationDto.builder()
                 .username("updateUser")
                 .role(SavorlyRole.RESTAURANT_ADMIN)
                 .build();
@@ -220,7 +232,7 @@ class UserControllerIT {
                 .build();
         userRepository.save(user);
 
-        UserDto updatedUser = UserDto.builder()
+        UserModificationDto updatedUser = UserModificationDto.builder()
                 .username(null)
                 .role(SavorlyRole.RESTAURANT_ADMIN)
                 .build();

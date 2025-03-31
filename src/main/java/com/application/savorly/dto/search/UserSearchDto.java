@@ -1,4 +1,4 @@
-package com.application.savorly.dto;
+package com.application.savorly.dto.search;
 
 import com.application.savorly.domain.catalog.SavorlyRole;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserSearchDto {
     private String username;
     private SavorlyRole role;
+    private String restaurantName;
 }
