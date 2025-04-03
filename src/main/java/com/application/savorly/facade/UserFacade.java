@@ -10,12 +10,14 @@ import com.application.savorly.dto.modify.UserModificationDto;
 import com.application.savorly.dto.search.UserSearchDto;
 import com.application.savorly.mapper.UserMapper;
 import com.application.savorly.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class UserFacade {
 
@@ -33,6 +35,7 @@ public class UserFacade {
             SavorlyUser user = userService.findUserByUsername(username);
             userService.login(user);
         } catch (Exception e) {
+            log.info("Registering user: {}", username);
             userService.createUser(UserModificationDto.builder()
                     .username(username)
                     .role(SavorlyRole.USER)

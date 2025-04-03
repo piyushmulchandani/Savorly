@@ -26,7 +26,6 @@ public class UserController {
     public void registerUser(
             @PathVariable String username
     ) {
-        log.info("Registering user: {}", username);
         userFacade.login(username);
     }
 
