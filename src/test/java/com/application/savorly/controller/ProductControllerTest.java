@@ -69,12 +69,14 @@ class ProductControllerTest {
                 .content(objectMapper.writeValueAsString(productCreationDto)))
                 .andExpect(status().isOk());
 
-        Product product = productRepository.findById(restaurant.getId()).orElseThrow();
+        List<Product> savedProducts = productRepository.findAll();
 
-        assertThat(product.getName()).isEqualTo("product");
-        assertThat(product.getPrice()).isEqualTo(BigDecimal.TEN);
-        assertThat(product.getCategory()).isEqualTo(ProductCategory.DESSERT);
-        assertThat(product.getRestaurant()).isEqualTo(restaurant);
+        assertThat(savedProducts).hasSize(1);
+
+        assertThat(savedProducts.getFirst().getName()).isEqualTo("product");
+        assertThat(savedProducts.getFirst().getPrice()).isEqualTo(BigDecimal.TEN);
+        assertThat(savedProducts.getFirst().getCategory()).isEqualTo(ProductCategory.DESSERT);
+        assertThat(savedProducts.getFirst().getRestaurant()).isEqualTo(restaurant);
     }
 
     @Test
