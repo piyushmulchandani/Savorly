@@ -50,7 +50,7 @@ public class Restaurant {
     private List<SavorlyUser> workers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
     @Builder.Default
