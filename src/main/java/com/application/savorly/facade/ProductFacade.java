@@ -1,11 +1,13 @@
 package com.application.savorly.facade;
 
+import com.application.savorly.config.exceptions.BadRequestException;
 import com.application.savorly.config.interfaces.hasAnyRole;
 import com.application.savorly.config.interfaces.hasRestaurantAdminRole;
 import com.application.savorly.domain.entity.Product;
 import com.application.savorly.domain.entity.Restaurant;
 import com.application.savorly.dto.create.ProductCreationDto;
 import com.application.savorly.dto.response.ProductResponseDto;
+import com.application.savorly.dto.search.ProductSearchDto;
 import com.application.savorly.mapper.ProductMapper;
 import com.application.savorly.service.ProductService;
 import com.application.savorly.service.RestaurantService;
@@ -27,14 +29,17 @@ public class ProductFacade {
     }
 
     @hasRestaurantAdminRole
-    public void addProduct(Long restaurantId, ProductCreationDto productCreationDto) {
+    public ProductResponseDto addProduct(Long restaurantId, ProductCreationDto productCreationDto) {
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
-        productService.createProduct(restaurant, productCreationDto);
+        if(productService.productAlreadyExists(restaurantId, productCreationDto.getName())) {
+            throw new BadRequestException("Product already exists");
+        }
+        return productMapper.productToProductResponseDto(productService.createProduct(restaurant, productCreationDto));
     }
 
     @hasAnyRole
-    public List<ProductResponseDto> getRestaurantProducts(Long restaurantId) {
-        return productMapper.productToProductResponseDtoList(productService.getRestaurantProducts(restaurantId));
+    public List<ProductResponseDto> getRestaurantProductsFiltered(Long restaurantId, ProductSearchDto productSearchDto) {
+        return productMapper.productToProductResponseDtoList(productService.getRestaurantProductsFiltered(restaurantId, productSearchDto));
     }
 
     @hasRestaurantAdminRole

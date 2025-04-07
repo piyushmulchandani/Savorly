@@ -3,7 +3,6 @@ package com.application.savorly.domain.entity;
 import com.application.savorly.domain.catalog.OrderType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,11 +20,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime orderTime;
+    @Builder.Default
+    private LocalDateTime orderTime = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     private OrderType type;
+
+    @Builder.Default
+    private Boolean completed = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "table_id", nullable = false)

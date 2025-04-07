@@ -22,7 +22,8 @@ public class Restaurant {
     @Column(nullable = false, unique = true)
     private String name;
 
-    private boolean isPublic = false;
+    @Builder.Default
+    private Boolean isPublic = false;
 
     private LocalTime openTime;
 

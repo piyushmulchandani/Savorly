@@ -3,6 +3,7 @@ package com.application.savorly.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,11 @@ public class Table {
 
     private int tableNumber;
 
-    private Boolean occupied;
+    @Builder.Default
+    private Boolean occupied = false;
+
+    @Builder.Default
+    private BigDecimal currentCost = BigDecimal.ZERO;
 
     private int minPeople;
 

@@ -80,8 +80,34 @@ class ProductControllerTest {
     }
 
     @Test
+    @WithMockCustomUser(role = "restaurant_admin")
+    void addProduct_AlreadyExists() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        Product product = Product.builder()
+                .name("product")
+                .restaurant(restaurant)
+                .build();
+        productRepository.save(product);
+
+        ProductCreationDto productCreationDto = ProductCreationDto.builder()
+                .name("product")
+                .price(BigDecimal.TEN)
+                .category(ProductCategory.DESSERT)
+                .build();
+
+        mockMvc.perform(post("/api/v1/products/{restaurantId}", restaurant.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productCreationDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @WithMockCustomUser
-    void getRestaurantProducts() throws Exception {
+    void getRestaurantProducts_Unfiltered() throws Exception {
         Restaurant restaurant = Restaurant.builder()
                 .name("Restaurant")
                 .build();
@@ -113,6 +139,41 @@ class ProductControllerTest {
         assertThat(response.getFirst().getName()).isEqualTo("product1");
         assertThat(response.getFirst().getCategory()).isEqualTo(ProductCategory.MAIN_COURSE);
         assertThat(response.getFirst().getPrice()).isEqualTo(BigDecimal.TEN);
+    }
+
+    @Test
+    @WithMockCustomUser
+    void getRestaurantProducts_Filtered() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        Product product1 = Product.builder()
+                .name("product1")
+                .restaurant(restaurant)
+                .category(ProductCategory.MAIN_COURSE)
+                .price(BigDecimal.TEN)
+                .build();
+        Product product2 = Product.builder()
+                .name("product2")
+                .restaurant(restaurant)
+                .category(ProductCategory.MAIN_COURSE)
+                .price(BigDecimal.valueOf(10.99))
+                .build();
+
+        productRepository.saveAll(List.of(product1, product2));
+
+        MvcResult actual = mockMvc.perform(get("/api/v1/products/{restaurantId}", restaurant.getId())
+                        .queryParam("category", ProductCategory.MAIN_COURSE.name())
+                        .queryParam("name", "product2"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<ProductResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+
+        assertThat(response).hasSize(1);
     }
 
     @Test
