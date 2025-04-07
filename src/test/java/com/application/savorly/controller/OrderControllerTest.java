@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,5 +101,42 @@ class OrderControllerTest {
         assertThat(order.getCompleted()).isFalse();
         assertThat(order.getProducts()).hasSize(1);
         assertThat(table.getCurrentCost()).isEqualTo(BigDecimal.TEN);
+    }
+
+    @Test
+    @WithMockCustomUser(role = "restaurant_worker")
+    void confirmOrder() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        Table table = Table.builder()
+                .tableNumber(1)
+                .restaurant(restaurant)
+                .build();
+        table = tableRepository.save(table);
+
+        Product product = Product.builder()
+                .name("product")
+                .price(BigDecimal.TEN)
+                .restaurant(restaurant)
+                .build();
+        product = productRepository.save(product);
+
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+
+        Order order = Order.builder()
+                .table(table)
+                .products(products)
+                .build();
+        order = orderRepository.save(order);
+
+        mockMvc.perform(post("/api/v1/orders/confirm/{orderId}", order.getId()))
+                .andExpect(status().isOk());
+
+        order = orderRepository.findById(order.getId()).orElseThrow();
+        assertThat(order.getCompleted()).isTrue();
     }
 }

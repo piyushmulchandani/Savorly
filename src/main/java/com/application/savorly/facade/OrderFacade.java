@@ -47,6 +47,7 @@ public class OrderFacade {
         return orderMapper.orderToOrderResponseDto(orderService.createOrder(table, products, orderCreationDto.getType()));
     }
 
+    @hasRestaurantRole
     public void confirmOrder(Long orderId) {
         Order order = orderService.findById(orderId);
         orderService.confirmOrder(order);
