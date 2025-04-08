@@ -1,7 +1,14 @@
 package com.application.savorly.mapper;
 
+import com.application.savorly.domain.entity.Table;
+import com.application.savorly.dto.response.TableResponseDto;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+import java.util.List;
+
+@Mapper(componentModel = "spring", uses = {OrderMapper.class})
 public interface TableMapper {
+    TableResponseDto tableToTableResponseDto(Table table);
+
+    List<TableResponseDto> tablesToTableResponseDtoList(List<Table> tables);
 }

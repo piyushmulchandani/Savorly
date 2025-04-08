@@ -4,8 +4,12 @@ import com.application.savorly.config.exceptions.NotFoundException;
 import com.application.savorly.domain.catalog.OrderType;
 import com.application.savorly.domain.entity.Order;
 import com.application.savorly.domain.entity.Product;
+import com.application.savorly.domain.entity.QOrder;
 import com.application.savorly.domain.entity.Table;
+import com.application.savorly.dto.search.OrderSearchDto;
 import com.application.savorly.repository.OrderRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,5 +42,35 @@ public class OrderService {
         order.setCompleted(true);
 
         orderRepository.save(order);
+    }
+
+    public List<Order> getAllOrdersFiltered(Long restaurantId, OrderSearchDto orderSearchDto) {
+        Predicate predicate = getWhere(restaurantId, orderSearchDto);
+
+        return (List<Order>) orderRepository.findAll(predicate);
+    }
+
+    public void cancelOrder(Order order) {
+        orderRepository.deleteById(order.getId());
+    }
+
+    private Predicate getWhere(Long restaurantId, OrderSearchDto orderSearchDto) {
+        BooleanBuilder where = new BooleanBuilder();
+
+        where.and(QOrder.order.table.restaurant.id.eq(restaurantId));
+
+        if(orderSearchDto.getOrderType() != null) {
+            where.and(QOrder.order.type.eq(orderSearchDto.getOrderType()));
+        }
+
+        if(orderSearchDto.getTableId() != null) {
+            where.and(QOrder.order.table.id.eq(orderSearchDto.getTableId()));
+        }
+
+        if(orderSearchDto.getCompleted() != null) {
+            where.and(QOrder.order.completed.eq(orderSearchDto.getCompleted()));
+        }
+
+        return where;
     }
 }

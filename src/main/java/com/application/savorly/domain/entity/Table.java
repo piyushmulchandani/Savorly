@@ -19,7 +19,7 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int tableNumber;
+    private Integer tableNumber;
 
     @Builder.Default
     private Boolean occupied = false;
@@ -27,16 +27,16 @@ public class Table {
     @Builder.Default
     private BigDecimal currentCost = BigDecimal.ZERO;
 
-    private int minPeople;
+    private Integer minPeople;
 
-    private int maxPeople;
+    private Integer maxPeople;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
     @Builder.Default
-    @OneToMany(mappedBy = "table", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "table", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
 
     @Builder.Default

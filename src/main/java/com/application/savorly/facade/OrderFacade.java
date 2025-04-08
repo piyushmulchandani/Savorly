@@ -6,6 +6,7 @@ import com.application.savorly.domain.entity.Product;
 import com.application.savorly.domain.entity.Table;
 import com.application.savorly.dto.create.OrderCreationDto;
 import com.application.savorly.dto.response.OrderResponseDto;
+import com.application.savorly.dto.search.OrderSearchDto;
 import com.application.savorly.mapper.OrderMapper;
 import com.application.savorly.service.OrderService;
 import com.application.savorly.service.ProductService;
@@ -51,5 +52,23 @@ public class OrderFacade {
     public void confirmOrder(Long orderId) {
         Order order = orderService.findById(orderId);
         orderService.confirmOrder(order);
+    }
+
+    @hasRestaurantRole
+    public List<OrderResponseDto> getAllOrders(Long restaurantId, OrderSearchDto orderSearchDto) {
+        return orderMapper.ordersToOrderResponseDtos(orderService.getAllOrdersFiltered(restaurantId, orderSearchDto));
+    }
+
+    @hasRestaurantRole
+    public void cancelOrder(Long orderId) {
+        Order order = orderService.findById(orderId);
+
+        BigDecimal orderCost = order.getProducts().stream()
+                .map(Product::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        tableService.addCost(order.getTable(), orderCost.negate());
+
+        orderService.cancelOrder(order);
     }
 }

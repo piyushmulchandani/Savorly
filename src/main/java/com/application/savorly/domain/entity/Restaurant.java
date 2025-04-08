@@ -47,7 +47,7 @@ public class Restaurant {
     private String country;
 
     @Builder.Default
-    @OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY)
     private List<SavorlyUser> workers = new ArrayList<>();
 
     @Builder.Default

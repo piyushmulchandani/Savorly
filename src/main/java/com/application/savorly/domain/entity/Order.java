@@ -34,7 +34,7 @@ public class Order {
     private Table table;
 
     @Builder.Default
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_product",
             joinColumns = @JoinColumn(name = "order_id"),

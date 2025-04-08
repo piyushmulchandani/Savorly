@@ -22,15 +22,15 @@ public class Reservation {
 
     private int quantity;
 
-    @ManyToOne(fetch = FetchType.EAGER) // A reservation always belongs to a user
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private SavorlyUser user;
 
-    @ManyToOne(fetch = FetchType.EAGER) // A reservation always belongs to a restaurant
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "table_id", nullable = false) // Associate each reservation with a table
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_id", nullable = false)
     private Table table;
 }

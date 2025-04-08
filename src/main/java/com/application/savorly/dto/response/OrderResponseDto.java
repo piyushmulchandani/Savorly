@@ -21,7 +21,7 @@ public class OrderResponseDto {
     private LocalDateTime orderTime;
     private OrderType type;
     private Boolean completed;
-    private int tableNumber;
+    private Integer tableNumber;
     private List<ProductResponseDto> products;
 
 }
