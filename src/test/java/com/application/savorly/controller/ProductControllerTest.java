@@ -59,14 +59,15 @@ class ProductControllerTest {
         restaurant = restaurantRepository.save(restaurant);
 
         ProductCreationDto productCreationDto = ProductCreationDto.builder()
+                .restaurantId(restaurant.getId())
                 .name("product")
                 .price(BigDecimal.TEN)
                 .category(ProductCategory.DESSERT)
                 .build();
 
-        mockMvc.perform(post("/api/v1/products/{restaurantId}", restaurant.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productCreationDto)))
+        mockMvc.perform(post("/api/v1/restaurants/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productCreationDto)))
                 .andExpect(status().isOk());
 
         List<Product> savedProducts = productRepository.findAll();
@@ -89,17 +90,18 @@ class ProductControllerTest {
 
         Product product = Product.builder()
                 .name("product")
-                .restaurant(restaurant)
                 .build();
+        restaurant.addProduct(product);
         productRepository.save(product);
 
         ProductCreationDto productCreationDto = ProductCreationDto.builder()
+                .restaurantId(restaurant.getId())
                 .name("product")
                 .price(BigDecimal.TEN)
                 .category(ProductCategory.DESSERT)
                 .build();
 
-        mockMvc.perform(post("/api/v1/products/{restaurantId}", restaurant.getId())
+        mockMvc.perform(post("/api/v1/restaurants/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productCreationDto)))
                 .andExpect(status().isBadRequest());
@@ -115,20 +117,21 @@ class ProductControllerTest {
 
         Product product1 = Product.builder()
                 .name("product1")
-                .restaurant(restaurant)
                 .category(ProductCategory.MAIN_COURSE)
                 .price(BigDecimal.TEN)
                 .build();
+        restaurant.addProduct(product1);
         Product product2 = Product.builder()
                 .name("product2")
-                .restaurant(restaurant)
                 .category(ProductCategory.MAIN_COURSE)
                 .price(BigDecimal.valueOf(10.99))
                 .build();
+        restaurant.addProduct(product2);
 
         productRepository.saveAll(List.of(product1, product2));
 
-        MvcResult actual = mockMvc.perform(get("/api/v1/products/{restaurantId}", restaurant.getId()))
+        MvcResult actual = mockMvc.perform(get("/api/v1/restaurants/products")
+                        .queryParam("restaurantId", restaurant.getId().toString()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -151,20 +154,21 @@ class ProductControllerTest {
 
         Product product1 = Product.builder()
                 .name("product1")
-                .restaurant(restaurant)
                 .category(ProductCategory.MAIN_COURSE)
                 .price(BigDecimal.TEN)
                 .build();
+        restaurant.addProduct(product1);
         Product product2 = Product.builder()
                 .name("product2")
-                .restaurant(restaurant)
                 .category(ProductCategory.MAIN_COURSE)
                 .price(BigDecimal.valueOf(10.99))
                 .build();
+        restaurant.addProduct(product2);
 
         productRepository.saveAll(List.of(product1, product2));
 
-        MvcResult actual = mockMvc.perform(get("/api/v1/products/{restaurantId}", restaurant.getId())
+        MvcResult actual = mockMvc.perform(get("/api/v1/restaurants/products")
+                        .queryParam("restaurantId", restaurant.getId().toString())
                         .queryParam("category", ProductCategory.MAIN_COURSE.name())
                         .queryParam("name", "product2"))
                 .andExpect(status().isOk())
@@ -186,13 +190,13 @@ class ProductControllerTest {
 
         Product product = Product.builder()
                 .name("product")
-                .restaurant(restaurant)
                 .category(ProductCategory.MAIN_COURSE)
                 .price(BigDecimal.TEN)
                 .build();
+        restaurant.addProduct(product);
         product = productRepository.save(product);
 
-        mockMvc.perform(delete("/api/v1/products/{productId}", product.getId()))
+        mockMvc.perform(delete("/api/v1/restaurants/products/{productId}", product.getId()))
                 .andExpect(status().isOk());
 
         assertThat(productRepository.existsById(product.getId())).isFalse();
@@ -201,7 +205,7 @@ class ProductControllerTest {
     @Test
     @WithMockCustomUser(role = "restaurant_admin")
     void deleteProduct_NotFound() throws Exception {
-        mockMvc.perform(delete("/api/v1/products/{productId}", 1L))
+        mockMvc.perform(delete("/api/v1/restaurants/products/{productId}", 1L))
                 .andExpect(status().isNotFound());
     }
 }

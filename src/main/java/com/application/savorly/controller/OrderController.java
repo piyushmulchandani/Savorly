@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/api/v1/restaurants/orders")
 public class OrderController {
 
     private final OrderFacade orderFacade;
@@ -21,12 +21,11 @@ public class OrderController {
         this.orderFacade = orderFacade;
     }
 
-    @PostMapping("/{tableId}")
+    @PostMapping
     public OrderResponseDto createOrder(
-            @PathVariable Long tableId,
             @RequestBody OrderCreationDto orderCreationDto
     ) {
-        return orderFacade.createOrder(tableId, orderCreationDto);
+        return orderFacade.createOrder(orderCreationDto);
     }
 
     @PatchMapping("/confirm/{orderId}")
@@ -36,12 +35,11 @@ public class OrderController {
         orderFacade.confirmOrder(orderId);
     }
 
-    @GetMapping("/{restaurantId}")
+    @GetMapping
     public List<OrderResponseDto> getAllOrders(
-            @PathVariable Long restaurantId,
             @ParameterObject OrderSearchDto orderSearchDto
     ) {
-        return orderFacade.getAllOrders(restaurantId, orderSearchDto);
+        return orderFacade.getAllOrders(orderSearchDto);
     }
 
     @DeleteMapping("/cancel/{orderId}")

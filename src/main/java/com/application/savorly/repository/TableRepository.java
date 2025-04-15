@@ -6,8 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface TableRepository extends JpaRepository<Table, Long>, QuerydslPredicateExecutor<Table> {
 
-    @Query("SELECT COALESCE(MAX(t.tableNumber), 0) FROM Table t WHERE t.restaurant.id = :restaurantId")
+    @Query("SELECT MAX(t.tableNumber) FROM Table t WHERE t.restaurant.id = :restaurantId")
     Integer findMaxTableNumberByRestaurantId(@Param("restaurantId") Long restaurantId);
+
+    Optional<Table> findByTableNumberAndRestaurant_Id(Integer tableNumber, Long id);
+
 }

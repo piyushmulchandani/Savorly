@@ -71,23 +71,24 @@ class OrderControllerIT {
 
         Table table = Table.builder()
                 .tableNumber(1)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table);
         table = tableRepository.save(table);
 
         Product product = Product.builder()
                 .name("product")
                 .price(BigDecimal.TEN)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addProduct(product);
         product = productRepository.save(product);
 
         OrderCreationDto orderCreationDto = OrderCreationDto.builder()
+                .tableId(table.getId())
                 .type(OrderType.RESTAURANT)
                 .productIds(List.of(product.getId()))
                 .build();
 
-        mockMvc.perform(post("/api/v1/orders/{tableId}", table.getId())
+        mockMvc.perform(post("/api/v1/restaurants/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(orderCreationDto)))
                 .andExpect(status().isOk());
@@ -116,27 +117,27 @@ class OrderControllerIT {
 
         Table table = Table.builder()
                 .tableNumber(1)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table);
         table = tableRepository.save(table);
 
         Product product = Product.builder()
                 .name("product")
                 .price(BigDecimal.TEN)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addProduct(product);
         product = productRepository.save(product);
 
         List<Product> products = new ArrayList<>();
         products.add(product);
 
         Order order = Order.builder()
-                .table(table)
                 .products(products)
                 .build();
+        table.addOrder(order);
         order = orderRepository.save(order);
 
-        mockMvc.perform(patch("/api/v1/orders/confirm/{orderId}", order.getId()))
+        mockMvc.perform(patch("/api/v1/restaurants/orders/confirm/{orderId}", order.getId()))
                 .andExpect(status().isOk());
 
         order = orderRepository.findById(order.getId()).orElseThrow();
@@ -153,41 +154,42 @@ class OrderControllerIT {
 
         Table table = Table.builder()
                 .tableNumber(1)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table);
         table = tableRepository.save(table);
 
         Product product = Product.builder()
                 .name("product")
                 .price(BigDecimal.TEN)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addProduct(product);
         product = productRepository.save(product);
 
         List<Product> products = new ArrayList<>();
         products.add(product);
 
         Order order = Order.builder()
-                .table(table)
                 .type(OrderType.RESTAURANT)
                 .products(products)
                 .build();
+        table.addOrder(order);
         orderRepository.save(order);
 
         Table table2 = Table.builder()
                 .tableNumber(1)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table2);
         tableRepository.save(table2);
 
         Order order2 = Order.builder()
-                .table(table2)
                 .type(OrderType.DELIVERY)
                 .products(products)
                 .build();
+        table2.addOrder(order2);
         orderRepository.save(order2);
 
-        MvcResult actual = mockMvc.perform(get("/api/v1/orders/{restaurantId}", restaurant.getId()))
+        MvcResult actual = mockMvc.perform(get("/api/v1/restaurants/orders")
+                        .queryParam("restaurantId", restaurant.getId().toString()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -212,41 +214,42 @@ class OrderControllerIT {
 
         Table table = Table.builder()
                 .tableNumber(1)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table);
         table = tableRepository.save(table);
 
         Product product = Product.builder()
                 .name("product")
                 .price(BigDecimal.TEN)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addProduct(product);
         product = productRepository.save(product);
 
         List<Product> products = new ArrayList<>();
         products.add(product);
 
         Order order = Order.builder()
-                .table(table)
                 .type(OrderType.RESTAURANT)
                 .products(products)
                 .build();
+        table.addOrder(order);
         orderRepository.save(order);
 
         Table table2 = Table.builder()
                 .tableNumber(1)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table2);
         tableRepository.save(table2);
 
         Order order2 = Order.builder()
-                .table(table2)
                 .type(OrderType.DELIVERY)
                 .products(products)
                 .build();
+        table2.addOrder(order2);
         orderRepository.save(order2);
 
-        MvcResult actual = mockMvc.perform(get("/api/v1/orders/{restaurantId}", restaurant.getId())
+        MvcResult actual = mockMvc.perform(get("/api/v1/restaurants/orders")
+                        .queryParam("restaurantId", restaurant.getId().toString())
                         .queryParam("orderType", OrderType.RESTAURANT.toString())
                         .queryParam("tableNumber", String.valueOf(table.getTableNumber()))
                         .queryParam("completed", Boolean.FALSE.toString()))
@@ -270,27 +273,27 @@ class OrderControllerIT {
         Table table = Table.builder()
                 .tableNumber(1)
                 .currentCost(BigDecimal.TEN)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addTable(table);
         table = tableRepository.save(table);
 
         Product product = Product.builder()
                 .name("product")
                 .price(BigDecimal.TEN)
-                .restaurant(restaurant)
                 .build();
+        restaurant.addProduct(product);
         product = productRepository.save(product);
 
         List<Product> products = new ArrayList<>();
         products.add(product);
 
         Order order = Order.builder()
-                .table(table)
                 .products(products)
                 .build();
+        table.addOrder(order);
         order = orderRepository.save(order);
 
-        mockMvc.perform(delete("/api/v1/orders/cancel/{orderId}", order.getId()))
+        mockMvc.perform(delete("/api/v1/restaurants/orders/cancel/{orderId}", order.getId()))
                 .andExpect(status().isOk());
 
         table = tableRepository.findById(table.getId()).orElseThrow();

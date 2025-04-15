@@ -1,6 +1,5 @@
 package com.application.savorly.dto.search;
 
-import com.application.savorly.domain.catalog.OrderType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderSearchDto {
+public class TableSearchDto {
 
     @NotNull
     private Long restaurantId;
-    private OrderType orderType;
-    private Boolean completed;
-    private Long tableId;
+    private Integer tableNumber;
+    private Boolean occupied;
+    private Integer numPeople;
 
 }

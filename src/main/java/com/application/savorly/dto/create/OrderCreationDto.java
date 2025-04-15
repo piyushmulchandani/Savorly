@@ -16,6 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderCreationDto {
     @NotNull
+    private Long tableId;
+    @NotNull
     private OrderType type;
     @NotEmpty
     private List<Long> productIds;

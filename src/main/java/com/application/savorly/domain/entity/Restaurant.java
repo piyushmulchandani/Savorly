@@ -61,4 +61,14 @@ public class Restaurant {
     @Builder.Default
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
+
+    public void addProduct(Product product) {
+        products.add(product);
+        product.setRestaurant(this);
+    }
+
+    public void addTable(Table table) {
+        tables.add(table);
+        table.setRestaurant(this);
+    }
 }

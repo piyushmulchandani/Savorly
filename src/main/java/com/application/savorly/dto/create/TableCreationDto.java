@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TableCreationDto {
 
+    private Long restaurantId;
     private Integer minPeople;
     private Integer maxPeople;
 

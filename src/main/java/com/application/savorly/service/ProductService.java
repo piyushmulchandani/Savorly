@@ -31,7 +31,9 @@ public class ProductService {
                 .name(productCreationDto.getName())
                 .price(productCreationDto.getPrice())
                 .category(productCreationDto.getCategory())
-                .restaurant(restaurant).build();
+                .build();
+
+        restaurant.addProduct(product);
 
         return productRepository.save(product);
     }
@@ -41,18 +43,19 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with id " + productId));
     }
 
-    public List<Product> getRestaurantProductsFiltered(Long restaurantId, ProductSearchDto productSearchDto) {
-        Predicate predicate = getWhere(restaurantId, productSearchDto);
+    public List<Product> getRestaurantProductsFiltered(ProductSearchDto productSearchDto) {
+        Predicate predicate = getWhere(productSearchDto);
         return (List<Product>) productRepository.findAll(predicate);
     }
 
     public void deleteProduct(Product product) {
+        product.getRestaurant().getProducts().remove(product);
         productRepository.delete(product);
     }
 
-    private Predicate getWhere(Long restaurantId, ProductSearchDto productSearchDto) {
+    private Predicate getWhere(ProductSearchDto productSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
-        where.and(QProduct.product.restaurant.id.eq(restaurantId));
+        where.and(QProduct.product.restaurant.id.eq(productSearchDto.getRestaurantId()));
         if(productSearchDto.getCategory() != null) {
             where.and(QProduct.product.category.eq(productSearchDto.getCategory()));
         }

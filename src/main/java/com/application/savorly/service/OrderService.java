@@ -31,9 +31,10 @@ public class OrderService {
     public Order createOrder(Table table, List<Product> products, OrderType type) {
         Order order = Order.builder()
                 .type(type)
-                .table(table)
                 .products(products)
                 .build();
+
+        table.addOrder(order);
 
         return orderRepository.save(order);
     }
@@ -44,20 +45,21 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    public List<Order> getAllOrdersFiltered(Long restaurantId, OrderSearchDto orderSearchDto) {
-        Predicate predicate = getWhere(restaurantId, orderSearchDto);
+    public List<Order> getAllOrdersFiltered(OrderSearchDto orderSearchDto) {
+        Predicate predicate = getWhere(orderSearchDto);
 
         return (List<Order>) orderRepository.findAll(predicate);
     }
 
     public void cancelOrder(Order order) {
+        order.getTable().getOrders().remove(order);
         orderRepository.deleteById(order.getId());
     }
 
-    private Predicate getWhere(Long restaurantId, OrderSearchDto orderSearchDto) {
+    private Predicate getWhere(OrderSearchDto orderSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
 
-        where.and(QOrder.order.table.restaurant.id.eq(restaurantId));
+        where.and(QOrder.order.table.restaurant.id.eq(orderSearchDto.getRestaurantId()));
 
         if(orderSearchDto.getOrderType() != null) {
             where.and(QOrder.order.type.eq(orderSearchDto.getOrderType()));

@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductCreationDto {
+    @NotNull
+    private Long restaurantId;
     @NotBlank
     private String name;
     @NotNull

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/v1/restaurants/products")
 public class ProductController {
 
     private final ProductFacade productFacade;
@@ -22,20 +22,18 @@ public class ProductController {
         this.productFacade = productFacade;
     }
 
-    @PostMapping("/{restaurantId}")
+    @PostMapping
     public ProductResponseDto addProduct(
-            @PathVariable Long restaurantId,
             @RequestBody ProductCreationDto productCreationDto
     ) {
-        return productFacade.addProduct(restaurantId, productCreationDto);
+        return productFacade.addProduct(productCreationDto);
     }
 
-    @GetMapping("/{restaurantId}")
+    @GetMapping
     public List<ProductResponseDto> getRestaurantProductsFiltered(
-            @PathVariable Long restaurantId,
             @ParameterObject @Valid ProductSearchDto productSearchDto
     ) {
-        return productFacade.getRestaurantProductsFiltered(restaurantId, productSearchDto);
+        return productFacade.getRestaurantProductsFiltered(productSearchDto);
     }
 
     @DeleteMapping("/{productId}")

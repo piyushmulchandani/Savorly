@@ -29,17 +29,17 @@ public class ProductFacade {
     }
 
     @hasRestaurantAdminRole
-    public ProductResponseDto addProduct(Long restaurantId, ProductCreationDto productCreationDto) {
-        Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
-        if(productService.productAlreadyExists(restaurantId, productCreationDto.getName())) {
+    public ProductResponseDto addProduct(ProductCreationDto productCreationDto) {
+        Restaurant restaurant = restaurantService.getRestaurant(productCreationDto.getRestaurantId());
+        if(productService.productAlreadyExists(productCreationDto.getRestaurantId(), productCreationDto.getName())) {
             throw new BadRequestException("Product already exists");
         }
         return productMapper.productToProductResponseDto(productService.createProduct(restaurant, productCreationDto));
     }
 
     @hasAnyRole
-    public List<ProductResponseDto> getRestaurantProductsFiltered(Long restaurantId, ProductSearchDto productSearchDto) {
-        return productMapper.productToProductResponseDtoList(productService.getRestaurantProductsFiltered(restaurantId, productSearchDto));
+    public List<ProductResponseDto> getRestaurantProductsFiltered(ProductSearchDto productSearchDto) {
+        return productMapper.productToProductResponseDtoList(productService.getRestaurantProductsFiltered(productSearchDto));
     }
 
     @hasRestaurantAdminRole

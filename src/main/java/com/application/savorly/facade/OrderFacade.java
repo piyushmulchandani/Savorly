@@ -32,8 +32,8 @@ public class OrderFacade {
     }
 
     @hasRestaurantRole
-    public OrderResponseDto createOrder(Long tableId, OrderCreationDto orderCreationDto) {
-        Table table = tableService.findById(tableId);
+    public OrderResponseDto createOrder(OrderCreationDto orderCreationDto) {
+        Table table = tableService.findById(orderCreationDto.getTableId());
 
         List<Product> products = orderCreationDto.getProductIds().stream()
                 .map(productService::findById)
@@ -55,8 +55,8 @@ public class OrderFacade {
     }
 
     @hasRestaurantRole
-    public List<OrderResponseDto> getAllOrders(Long restaurantId, OrderSearchDto orderSearchDto) {
-        return orderMapper.ordersToOrderResponseDtos(orderService.getAllOrdersFiltered(restaurantId, orderSearchDto));
+    public List<OrderResponseDto> getAllOrders(OrderSearchDto orderSearchDto) {
+        return orderMapper.ordersToOrderResponseDtos(orderService.getAllOrdersFiltered(orderSearchDto));
     }
 
     @hasRestaurantRole

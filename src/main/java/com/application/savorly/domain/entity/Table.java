@@ -42,4 +42,9 @@ public class Table {
     @Builder.Default
     @OneToMany(mappedBy = "table", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setTable(this);
+    }
 }
