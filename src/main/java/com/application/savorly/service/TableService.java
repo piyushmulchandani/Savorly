@@ -1,5 +1,6 @@
 package com.application.savorly.service;
 
+import com.application.savorly.config.exceptions.BadRequestException;
 import com.application.savorly.config.exceptions.NotFoundException;
 import com.application.savorly.domain.entity.QTable;
 import com.application.savorly.domain.entity.Restaurant;
@@ -12,6 +13,7 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,8 +72,7 @@ public class TableService {
             if (tableToDeleteOpt.isPresent()) {
                 Table tableToDelete = tableToDeleteOpt.get();
 
-                Restaurant restaurant = tableToDelete.getRestaurant();
-                restaurant.getTables().remove(tableToDelete);
+                tableToDelete.getRestaurant().getTables().remove(tableToDelete);
 
                 tableRepository.delete(tableToDelete);
             }
@@ -81,6 +82,27 @@ public class TableService {
     public void addCost(Table table, BigDecimal orderCost) {
         table.setCurrentCost(table.getCurrentCost().add(orderCost));
         tableRepository.save(table);
+    }
+
+    public Table findAvailableTableFor(Long restaurantId, LocalDateTime date, Integer numPeople) {
+        List<Table> tables = tableRepository.findSuitableTables(restaurantId, numPeople);
+
+        return tables.stream()
+                .filter(table -> isAvailable(table, date))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("No available table found"));
+    }
+
+    public boolean isAvailable(Table table, LocalDateTime desiredDateTime) {
+        LocalDateTime desiredEnd = desiredDateTime.plusMinutes(90);
+
+        return table.getReservations().stream()
+                .noneMatch(existingReservation -> {
+                    LocalDateTime existingStart = existingReservation.getReservationTime();
+                    LocalDateTime existingEnd = existingStart.plusMinutes(90);
+
+                    return !(desiredEnd.isBefore(existingStart) || desiredDateTime.isAfter(existingEnd));
+                });
     }
 
     private Predicate getWhere(TableSearchDto tableSearchDto){

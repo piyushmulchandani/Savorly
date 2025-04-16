@@ -14,9 +14,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReservationResponseDto {
+
+    private Long id;
     private LocalDateTime reservationTime;
-    private int quantity;
+    private Integer numPeople;
     private String username;
     private String restaurantName;
-    private int tableNumber;
+    private Integer tableNumber;
+
 }

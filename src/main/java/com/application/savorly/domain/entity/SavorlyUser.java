@@ -35,4 +35,9 @@ public class SavorlyUser {
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
+
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
+        reservation.setUser(this);
+    }
 }

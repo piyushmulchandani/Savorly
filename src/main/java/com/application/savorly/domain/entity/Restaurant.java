@@ -71,4 +71,9 @@ public class Restaurant {
         tables.add(table);
         table.setRestaurant(this);
     }
+
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
+        reservation.setRestaurant(this);
+    }
 }

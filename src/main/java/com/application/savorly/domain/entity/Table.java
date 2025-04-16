@@ -47,4 +47,9 @@ public class Table {
         orders.add(order);
         order.setTable(this);
     }
+
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
+        reservation.setTable(this);
+    }
 }

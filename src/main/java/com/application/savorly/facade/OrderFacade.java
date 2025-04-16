@@ -12,6 +12,7 @@ import com.application.savorly.service.OrderService;
 import com.application.savorly.service.ProductService;
 import com.application.savorly.service.TableService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -59,6 +60,7 @@ public class OrderFacade {
         return orderMapper.ordersToOrderResponseDtos(orderService.getAllOrdersFiltered(orderSearchDto));
     }
 
+    @Transactional
     @hasRestaurantRole
     public void cancelOrder(Long orderId) {
         Order order = orderService.findById(orderId);

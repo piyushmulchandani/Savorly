@@ -11,6 +11,7 @@ import java.util.List;
 public interface ReservationMapper {
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "restaurant.name", target = "restaurantName")
+    @Mapping(source = "table.tableNumber", target = "tableNumber")
     ReservationResponseDto reservationToReservationResponseDto(Reservation reservation);
 
     List<ReservationResponseDto> reservationsToReservationResponseDtos(List<Reservation> reservations);

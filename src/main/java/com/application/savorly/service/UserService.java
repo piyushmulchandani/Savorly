@@ -75,13 +75,13 @@ public class UserService {
     private Predicate getWhere(UserSearchDto userSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
         if (userSearchDto.getUsername() != null) {
-            where.and(QSavorlyUser.savorlyUser.username.eq(userSearchDto.getUsername()));
+            where.and(QSavorlyUser.savorlyUser.username.contains(userSearchDto.getUsername()));
         }
         if (userSearchDto.getRole() != null) {
             where.and(QSavorlyUser.savorlyUser.role.eq(userSearchDto.getRole()));
         }
         if(userSearchDto.getRestaurantName() != null) {
-            where.and((QSavorlyUser.savorlyUser.restaurant.name.eq(userSearchDto.getRestaurantName())));
+            where.and((QSavorlyUser.savorlyUser.restaurant.name.contains(userSearchDto.getRestaurantName())));
         }
 
         return where;

@@ -4,6 +4,7 @@ import com.application.savorly.dto.create.TableCreationDto;
 import com.application.savorly.dto.response.TableResponseDto;
 import com.application.savorly.dto.search.TableSearchDto;
 import com.application.savorly.facade.TableFacade;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class TableController {
 
     @PostMapping
     public TableResponseDto addTable(
-            @RequestBody TableCreationDto tableCreationDto
+            @RequestBody @Valid TableCreationDto tableCreationDto
             ) {
         return tableFacade.addTable(tableCreationDto);
     }

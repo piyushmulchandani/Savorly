@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RestaurantResponseDto {
+
+    private Long id;
     private String name;
     private CuisineType cuisineType;
     private String description;
@@ -20,4 +22,5 @@ public class RestaurantResponseDto {
     private String phone;
     private String city;
     private String country;
+
 }

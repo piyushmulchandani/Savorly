@@ -12,6 +12,7 @@ import com.application.savorly.mapper.ProductMapper;
 import com.application.savorly.service.ProductService;
 import com.application.savorly.service.RestaurantService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class ProductFacade {
         return productMapper.productToProductResponseDtoList(productService.getRestaurantProductsFiltered(productSearchDto));
     }
 
+    @Transactional
     @hasRestaurantAdminRole
     public void deleteProduct(Long productId) {
         Product product = productService.findById(productId);
