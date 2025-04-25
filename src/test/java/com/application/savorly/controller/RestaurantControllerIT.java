@@ -261,7 +261,7 @@ class RestaurantControllerIT {
         mockMvc.perform((post("/api/v1/restaurants/reject/{restaurantId}", restaurant.getId())
                         .content(reason)
                         .contentType(MediaType.APPLICATION_JSON)))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
