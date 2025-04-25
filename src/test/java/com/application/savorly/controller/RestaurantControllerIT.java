@@ -345,28 +345,7 @@ class RestaurantControllerIT {
                 .status(RestaurantStatus.PRIVATE)
                 .city("Madrid")
                 .build();
-        restaurant = restaurantRepository.save(restaurant);
-
-        SavorlyUser user = SavorlyUser.builder()
-                .username("User")
-                .build();
-        userRepository.save(user);
-
-        Table table = Table.builder()
-                .minPeople(2)
-                .maxPeople(3)
-                .build();
-        restaurant.addTable(table);
-        tableRepository.save(table);
-
-        Reservation reservation = Reservation.builder()
-                .reservationTime(LocalDateTime.of(2025, 4, 1, 8, 0))
-                .numPeople(2)
-                .build();
-        restaurant.addReservation(reservation);
-        table.addReservation(reservation);
-        user.addReservation(reservation);
-        reservationRepository.save(reservation);
+        restaurantRepository.save(restaurant);
 
         Restaurant restaurant1 = Restaurant.builder()
                 .name("Restaurant1")
@@ -378,12 +357,33 @@ class RestaurantControllerIT {
                 .build();
         restaurantRepository.save(restaurant1);
 
+        SavorlyUser user = SavorlyUser.builder()
+                .username("User")
+                .build();
+        userRepository.save(user);
+
+        Table table = Table.builder()
+                .minPeople(2)
+                .maxPeople(3)
+                .build();
+        restaurant1.addTable(table);
+        tableRepository.save(table);
+
+        Reservation reservation = Reservation.builder()
+                .reservationTime(LocalDateTime.of(2025, 4, 1, 8, 0))
+                .numPeople(2)
+                .build();
+        restaurant1.addReservation(reservation);
+        table.addReservation(reservation);
+        user.addReservation(reservation);
+        reservationRepository.save(reservation);
+
         MvcResult actual = mockMvc.perform((get("/api/v1/restaurants")
                         .queryParam("name", "Restaurant")
                         .queryParam("status", RestaurantStatus.PUBLIC.toString())
                         .queryParam("cuisineType", CuisineType.MEXICAN.toString())
                         .queryParam("city", "Barcelona")
-                        .queryParam("dateTime", "2025-04-01T08:30:00")
+                        .queryParam("dateTime", "2025-04-01T09:30:00")
                         .queryParam("numPeople", Integer.toString(3))))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -391,7 +391,7 @@ class RestaurantControllerIT {
         List<RestaurantResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
         });
 
-        assertThat(response).isEmpty();
+        assertThat(response).hasSize(1);
     }
 
     @Test

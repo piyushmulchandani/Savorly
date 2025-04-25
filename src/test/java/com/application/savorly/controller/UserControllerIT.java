@@ -210,9 +210,15 @@ class UserControllerIT {
                 .build();
         userRepository.save(user);
 
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurantRepository.save(restaurant);
+
         UserModificationDto updatedUser = UserModificationDto.builder()
                 .username("updateUser")
                 .role(SavorlyRole.RESTAURANT_ADMIN)
+                .restaurantName("Restaurant")
                 .build();
 
         mockMvc.perform(patch("/api/v1/users")
