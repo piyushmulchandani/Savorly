@@ -70,10 +70,10 @@ public class UserService {
     }
 
     public void updateUser(SavorlyUser user, UserModificationDto userModificationDto) {
-        if(userModificationDto.getRole() != null){
+        if (userModificationDto.getRole() != null) {
             user.setRole(userModificationDto.getRole());
         }
-        if(userModificationDto.getRestaurantName() != null){
+        if (userModificationDto.getRestaurantName() != null) {
             Restaurant restaurant = restaurantService.findByName(userModificationDto.getRestaurantName());
             restaurant.addWorker(user);
         }
@@ -109,7 +109,7 @@ public class UserService {
         if (userSearchDto.getRole() != null) {
             where.and(QSavorlyUser.savorlyUser.role.eq(userSearchDto.getRole()));
         }
-        if(userSearchDto.getRestaurantName() != null) {
+        if (userSearchDto.getRestaurantName() != null) {
             where.and((QSavorlyUser.savorlyUser.restaurant.name.contains(userSearchDto.getRestaurantName())));
         }
 

@@ -78,13 +78,13 @@ public class ReservationService {
     private Predicate getWhere(ReservationSearchDto reservationSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
 
-        if(reservationSearchDto.getRestaurantId() != null) {
+        if (reservationSearchDto.getRestaurantId() != null) {
             where.and(QReservation.reservation.restaurant.id.eq(reservationSearchDto.getRestaurantId()));
         }
-        if(reservationSearchDto.getUsername() != null) {
+        if (reservationSearchDto.getUsername() != null) {
             where.and(QReservation.reservation.user.username.eq(reservationSearchDto.getUsername()));
         }
-        if(reservationSearchDto.getDate() != null) {
+        if (reservationSearchDto.getDate() != null) {
             LocalDate date = reservationSearchDto.getDate();
             where.and(QReservation.reservation.reservationTime.year().eq(date.getYear()));
             where.and(QReservation.reservation.reservationTime.month().eq(date.getMonthValue()));

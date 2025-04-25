@@ -74,7 +74,7 @@ public class RestaurantService {
         Predicate where = getWhere(restaurantSearchDto);
         List<Restaurant> restaurants = (List<Restaurant>) restaurantRepository.findAll(where);
 
-        if(restaurantSearchDto.getDateTime() != null && restaurantSearchDto.getNumPeople() != null) {
+        if (restaurantSearchDto.getDateTime() != null && restaurantSearchDto.getNumPeople() != null) {
             restaurants = filterByReservation(restaurants, restaurantSearchDto.getDateTime(), restaurantSearchDto.getNumPeople());
         }
 
@@ -88,16 +88,16 @@ public class RestaurantService {
     private Predicate getWhere(RestaurantSearchDto restaurantSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
 
-        if(restaurantSearchDto.getName() != null){
+        if (restaurantSearchDto.getName() != null) {
             where.and(QRestaurant.restaurant.name.contains(restaurantSearchDto.getName()));
         }
-        if(restaurantSearchDto.getStatus() != null){
+        if (restaurantSearchDto.getStatus() != null) {
             where.and(QRestaurant.restaurant.status.eq(restaurantSearchDto.getStatus()));
         }
-        if(restaurantSearchDto.getCuisineType() != null){
+        if (restaurantSearchDto.getCuisineType() != null) {
             where.and(QRestaurant.restaurant.cuisineType.eq(restaurantSearchDto.getCuisineType()));
         }
-        if(restaurantSearchDto.getCity() != null){
+        if (restaurantSearchDto.getCity() != null) {
             where.and(QRestaurant.restaurant.city.eq(restaurantSearchDto.getCity()));
         }
 

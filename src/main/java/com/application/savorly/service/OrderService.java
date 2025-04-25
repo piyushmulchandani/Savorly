@@ -61,15 +61,15 @@ public class OrderService {
 
         where.and(QOrder.order.table.restaurant.id.eq(orderSearchDto.getRestaurantId()));
 
-        if(orderSearchDto.getOrderType() != null) {
+        if (orderSearchDto.getOrderType() != null) {
             where.and(QOrder.order.type.eq(orderSearchDto.getOrderType()));
         }
 
-        if(orderSearchDto.getTableId() != null) {
+        if (orderSearchDto.getTableId() != null) {
             where.and(QOrder.order.table.id.eq(orderSearchDto.getTableId()));
         }
 
-        if(orderSearchDto.getCompleted() != null) {
+        if (orderSearchDto.getCompleted() != null) {
             where.and(QOrder.order.completed.eq(orderSearchDto.getCompleted()));
         }
 

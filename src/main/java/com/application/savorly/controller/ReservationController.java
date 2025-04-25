@@ -26,14 +26,14 @@ public class ReservationController {
     @GetMapping("/available-times")
     public List<LocalTime> getAvailableTimesForRestaurant(
             @ParameterObject ReservationSearchDto reservationSearchDto
-            ) {
+    ) {
         return reservationFacade.getAvailableTimeSlots(reservationSearchDto);
     }
 
     @PostMapping
     public ReservationResponseDto createReservation(
             @RequestBody @Valid ReservationCreationDto reservationCreationDto
-            ) {
+    ) {
         return reservationFacade.createReservation(reservationCreationDto);
     }
 
@@ -41,7 +41,7 @@ public class ReservationController {
     public List<ReservationResponseDto> getReservations(
             @ParameterObject ReservationSearchDto reservationSearchDto
     ) {
-        if(reservationSearchDto.getRestaurantId() != null){
+        if (reservationSearchDto.getRestaurantId() != null) {
             return reservationFacade.getRestaurantReservations(reservationSearchDto);
         }
 

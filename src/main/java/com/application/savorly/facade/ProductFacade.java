@@ -32,7 +32,7 @@ public class ProductFacade {
     @hasRestaurantAdminRole
     public ProductResponseDto addProduct(ProductCreationDto productCreationDto) {
         Restaurant restaurant = restaurantService.getRestaurant(productCreationDto.getRestaurantId());
-        if(productService.productAlreadyExists(productCreationDto.getRestaurantId(), productCreationDto.getName())) {
+        if (productService.productAlreadyExists(productCreationDto.getRestaurantId(), productCreationDto.getName())) {
             throw new BadRequestException("Product already exists");
         }
         return productMapper.productToProductResponseDto(productService.createProduct(restaurant, productCreationDto));

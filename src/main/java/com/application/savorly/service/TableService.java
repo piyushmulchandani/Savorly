@@ -105,18 +105,18 @@ public class TableService {
                 });
     }
 
-    private Predicate getWhere(TableSearchDto tableSearchDto){
+    private Predicate getWhere(TableSearchDto tableSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
 
         where.and(QTable.table.restaurant.id.eq(tableSearchDto.getRestaurantId()));
 
-        if(tableSearchDto.getOccupied() != null) {
+        if (tableSearchDto.getOccupied() != null) {
             where.and(QTable.table.occupied.eq(tableSearchDto.getOccupied()));
         }
-        if(tableSearchDto.getTableNumber() != null) {
+        if (tableSearchDto.getTableNumber() != null) {
             where.and(QTable.table.tableNumber.eq(tableSearchDto.getTableNumber()));
         }
-        if(tableSearchDto.getNumPeople() != null) {
+        if (tableSearchDto.getNumPeople() != null) {
             int numPeople = tableSearchDto.getNumPeople();
             where.and(QTable.table.minPeople.loe(numPeople).and(QTable.table.maxPeople.goe(numPeople)));
         }

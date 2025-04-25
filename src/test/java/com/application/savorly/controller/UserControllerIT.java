@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -68,7 +67,7 @@ class UserControllerIT {
         mockMvc.perform(post("/api/v1/users/login/{username}", username))
                 .andExpect(status().isOk());
 
-        assertTrue(userRepository.findByUsernameIgnoreCase(username).isPresent());
+        assertThat(userRepository.findByUsernameIgnoreCase(username)).isPresent();
     }
 
     @Test
@@ -83,8 +82,96 @@ class UserControllerIT {
         mockMvc.perform(post("/api/v1/users/login/{username}", user.getUsername()))
                 .andExpect(status().isOk());
 
-        assertTrue(userRepository.findByUsernameIgnoreCase(user.getUsername()).isPresent());
-        assertThat(userRepository.findByUsernameIgnoreCase(user.getUsername()).get().getLastLogonDate()).isNotNull();
+        user = userRepository.findByUsernameIgnoreCase(user.getUsername()).orElseThrow();
+        assertThat(user.getLastLogonDate()).isNotNull();
+    }
+
+    @Test
+    @WithMockCustomUser(role = "restaurant_admin", username = "Admin")
+    void shouldAddWorker() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser restaurantAdmin = SavorlyUser.builder()
+                .username("Admin")
+                .role(SavorlyRole.RESTAURANT_ADMIN)
+                .build();
+        restaurant.addWorker(restaurantAdmin);
+        userRepository.save(restaurantAdmin);
+
+        SavorlyUser newWorker = SavorlyUser.builder()
+                .username("Worker")
+                .role(SavorlyRole.USER)
+                .build();
+        userRepository.save(newWorker);
+
+        mockMvc.perform(post("/api/v1/users/add-worker/{username}", newWorker.getUsername())
+                        .queryParam("restaurantId", restaurant.getId().toString()))
+                .andExpect(status().isOk());
+
+        newWorker = userRepository.findByUsernameIgnoreCase(newWorker.getUsername()).orElseThrow();
+        assertThat(newWorker.getRestaurant().getId()).isEqualTo(restaurant.getId());
+        assertThat(newWorker.getRole()).isEqualTo(SavorlyRole.RESTAURANT_WORKER);
+    }
+
+    @Test
+    @WithMockCustomUser(role = "restaurant_admin", username = "Admin")
+    void addWorker_BadRequest() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser restaurantAdmin = SavorlyUser.builder()
+                .username("Admin")
+                .role(SavorlyRole.RESTAURANT_ADMIN)
+                .build();
+        restaurant.addWorker(restaurantAdmin);
+        userRepository.save(restaurantAdmin);
+
+        SavorlyUser newWorker = SavorlyUser.builder()
+                .username("Worker")
+                .role(SavorlyRole.USER)
+                .build();
+        restaurant.addWorker(newWorker);
+        userRepository.save(newWorker);
+
+        mockMvc.perform(post("/api/v1/users/add-worker/{username}", newWorker.getUsername())
+                        .queryParam("restaurantId", restaurant.getId().toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockCustomUser(role = "restaurant_admin", username = "Admin")
+    void shouldRemoveWorker() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser restaurantAdmin = SavorlyUser.builder()
+                .username("Admin")
+                .role(SavorlyRole.RESTAURANT_ADMIN)
+                .build();
+        restaurant.addWorker(restaurantAdmin);
+        userRepository.save(restaurantAdmin);
+
+        SavorlyUser newWorker = SavorlyUser.builder()
+                .username("Worker")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(newWorker);
+        userRepository.save(newWorker);
+
+        mockMvc.perform(delete("/api/v1/users/remove-worker/{username}", newWorker.getUsername())
+                        .queryParam("restaurantId", restaurant.getId().toString()))
+                .andExpect(status().isOk());
+
+        newWorker = userRepository.findByUsernameIgnoreCase(newWorker.getUsername()).orElseThrow();
+        assertThat(newWorker.getRestaurant()).isNull();
+        assertThat(newWorker.getRole()).isEqualTo(SavorlyRole.USER);
     }
 
     @Test
@@ -105,7 +192,7 @@ class UserControllerIT {
         mockMvc.perform(delete("/api/v1/users/delete/{username}", "deleteUser"))
                 .andExpect(status().isOk());
 
-        assertFalse(userRepository.findByUsernameIgnoreCase("deleteUser").isPresent());
+        assertThat(userRepository.findByUsernameIgnoreCase("deleteUser")).isEmpty();
     }
 
     @Test
@@ -129,8 +216,8 @@ class UserControllerIT {
                 .andReturn();
 
         UserResponseDto response = objectMapper.readValue(actual.getResponse().getContentAsString(), UserResponseDto.class);
-        assertEquals("testUser", response.getUsername());
-        assertEquals(SavorlyRole.USER, response.getRole());
+        assertThat(response.getUsername()).isEqualTo("testUser");
+        assertThat(response.getRole()).isEqualTo(SavorlyRole.USER);
     }
 
     @Test
@@ -227,7 +314,7 @@ class UserControllerIT {
                 .andExpect(status().isOk());
 
         SavorlyUser modifiedUser = userRepository.findByUsernameIgnoreCase("updateUser").orElseThrow();
-        assertEquals(SavorlyRole.RESTAURANT_ADMIN, modifiedUser.getRole());
+        assertThat(modifiedUser.getRole()).isEqualTo(SavorlyRole.RESTAURANT_ADMIN);
     }
 
     @Test

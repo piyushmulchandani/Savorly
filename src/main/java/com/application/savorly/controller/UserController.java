@@ -29,12 +29,28 @@ public class UserController {
         userFacade.login(username);
     }
 
+    @PostMapping("/add-worker/{username}")
+    public void addWorker(
+            @PathVariable String username,
+            @RequestParam Long restaurantId
+    ) {
+        userFacade.addWorker(username, restaurantId);
+    }
+
     @DeleteMapping("/delete/{username}")
     public void deleteUser(
             @PathVariable String username
     ) {
         log.info("Deleting user: {}", username);
         userFacade.deleteUser(username);
+    }
+
+    @DeleteMapping("/remove-worker/{username}")
+    public void removeWorker(
+            @PathVariable String username,
+            @RequestParam Long restaurantId
+    ) {
+        userFacade.removeWorker(username, restaurantId);
     }
 
     @GetMapping("/me")

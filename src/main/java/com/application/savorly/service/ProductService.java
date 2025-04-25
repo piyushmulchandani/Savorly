@@ -56,10 +56,10 @@ public class ProductService {
     private Predicate getWhere(ProductSearchDto productSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
         where.and(QProduct.product.restaurant.id.eq(productSearchDto.getRestaurantId()));
-        if(productSearchDto.getCategory() != null) {
+        if (productSearchDto.getCategory() != null) {
             where.and(QProduct.product.category.eq(productSearchDto.getCategory()));
         }
-        if(productSearchDto.getName() != null) {
+        if (productSearchDto.getName() != null) {
             where.and(QProduct.product.name.contains(productSearchDto.getName()));
         }
 

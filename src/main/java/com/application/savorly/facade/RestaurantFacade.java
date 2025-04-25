@@ -73,7 +73,7 @@ public class RestaurantFacade {
 
     @hasRestaurantAdminRole
     public void uploadImage(Long restaurantId, MultipartFile file) {
-        checkRestaurantPermission(restaurantId);
+        checkRestaurantAdminPermission(restaurantId);
         try {
             Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
             String imageUrl = cloudinaryService.uploadImage(file, "ResaurantImage" + restaurantId);
@@ -88,7 +88,7 @@ public class RestaurantFacade {
     @hasAdminRole
     public void acceptRestaurant(Long restaurantId) {
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
-        if(!RestaurantStatus.REQUESTED.equals(restaurant.getStatus())){
+        if (!RestaurantStatus.REQUESTED.equals(restaurant.getStatus())) {
             throw new BadRequestException("Cannot accept a restaurant that is not in REQUESTED status");
         }
 
@@ -101,7 +101,7 @@ public class RestaurantFacade {
     @hasAdminRole
     public void rejectRestaurant(Long restaurantId, String reason) {
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
-        if(!RestaurantStatus.REQUESTED.equals(restaurant.getStatus())){
+        if (!RestaurantStatus.REQUESTED.equals(restaurant.getStatus())) {
             throw new BadRequestException("Cannot reject a restaurant that is not in REQUESTED status");
         }
 
@@ -120,7 +120,7 @@ public class RestaurantFacade {
 
     @hasRestaurantAdminRole
     public RestaurantResponseDto updateRestaurant(Long restaurantId, RestaurantModificationDto restaurantModificationDto) {
-        checkRestaurantPermission(restaurantId);
+        checkRestaurantAdminPermission(restaurantId);
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
 
         restaurantService.updateRestaurant(restaurant, restaurantModificationDto);
@@ -130,20 +130,19 @@ public class RestaurantFacade {
     @Transactional
     @hasRestaurantAdminRole
     public void deleteRestaurant(Long restaurantId) {
-        checkRestaurantPermission(restaurantId);
+        checkRestaurantAdminPermission(restaurantId);
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
         restaurant.getWorkers().forEach(userService::removeFromRestaurant);
 
         restaurantService.deleteRestaurant(restaurant);
     }
 
-    private void checkRestaurantPermission(Long restaurantId) {
+    public void checkRestaurantAdminPermission(Long restaurantId) {
         UserDetails current = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SavorlyUser user = userService.findUserByUsername(current.getUsername());
 
-        if(!SavorlyRole.ADMIN.equals(user.getRole()) && (user.getRestaurant() == null || !restaurantId.equals(user.getRestaurant().getId()))) {
+        if (!SavorlyRole.ADMIN.equals(user.getRole()) && (user.getRestaurant() == null || !restaurantId.equals(user.getRestaurant().getId()))) {
             throw new ForbiddenException("You are not allowed to access this restaurant");
         }
-
     }
 }

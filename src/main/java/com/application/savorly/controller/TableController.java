@@ -25,7 +25,7 @@ public class TableController {
     @PostMapping
     public TableResponseDto addTable(
             @RequestBody @Valid TableCreationDto tableCreationDto
-            ) {
+    ) {
         return tableFacade.addTable(tableCreationDto);
     }
 
