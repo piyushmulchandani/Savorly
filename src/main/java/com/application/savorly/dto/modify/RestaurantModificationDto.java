@@ -1,8 +1,7 @@
-package com.application.savorly.dto.response;
+package com.application.savorly.dto.modify;
 
 import com.application.savorly.domain.catalog.CuisineType;
 import com.application.savorly.domain.catalog.RestaurantStatus;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,21 +13,17 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class RestaurantResponseDto {
+public class RestaurantModificationDto {
 
-    private Long id;
-    private String name;
     private RestaurantStatus status;
     private LocalTime openTime;
     private LocalTime closeTime;
-    private String imageUrl;
-    private String ownershipProofUrl;
     private CuisineType cuisineType;
     private String description;
     private String address;
     private String phone;
     private String city;
     private String country;
+    private String rejectionMessage;
 
 }

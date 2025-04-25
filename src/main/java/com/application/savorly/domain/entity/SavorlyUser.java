@@ -23,8 +23,9 @@ public class SavorlyUser {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private SavorlyRole role;
+    private SavorlyRole role = SavorlyRole.USER;
 
     private Date lastLogonDate;
 

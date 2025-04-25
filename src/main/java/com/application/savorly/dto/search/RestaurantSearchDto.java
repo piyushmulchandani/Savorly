@@ -1,7 +1,7 @@
-package com.application.savorly.dto.create;
+package com.application.savorly.dto.search;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.application.savorly.domain.catalog.CuisineType;
+import com.application.savorly.domain.catalog.RestaurantStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationCreationDto {
+public class RestaurantSearchDto {
 
-    @NotNull
+    private String name;
+    private RestaurantStatus status;
+    private CuisineType cuisineType;
+    private String city;
+
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime dateTime;
-    @NotNull
-    private Long restaurantId;
-    @NotBlank
-    private String username;
-    @NotNull
     private Integer numPeople;
 }

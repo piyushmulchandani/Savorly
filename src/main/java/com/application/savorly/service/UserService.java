@@ -1,7 +1,9 @@
 package com.application.savorly.service;
 
 import com.application.savorly.config.exceptions.NotFoundException;
+import com.application.savorly.domain.catalog.SavorlyRole;
 import com.application.savorly.domain.entity.QSavorlyUser;
+import com.application.savorly.domain.entity.Restaurant;
 import com.application.savorly.domain.entity.SavorlyUser;
 import com.application.savorly.dto.modify.UserModificationDto;
 import com.application.savorly.dto.search.UserSearchDto;
@@ -21,10 +23,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final Keycloak keycloak;
+    private final RestaurantService restaurantService;
 
-    public UserService(UserRepository userRepository, Keycloak keycloak) {
+    public UserService(UserRepository userRepository, Keycloak keycloak, RestaurantService restaurantService) {
         this.userRepository = userRepository;
         this.keycloak = keycloak;
+        this.restaurantService = restaurantService;
     }
 
     public SavorlyUser findUserByUsername(String username) {
@@ -66,8 +70,33 @@ public class UserService {
     }
 
     public void updateUser(SavorlyUser user, UserModificationDto userModificationDto) {
-        user.setRole(userModificationDto.getRole());
-        //TODO modify user's restaurant
+        if(userModificationDto.getRole() != null){
+            user.setRole(userModificationDto.getRole());
+        }
+        if(userModificationDto.getRestaurantName() != null){
+            Restaurant restaurant = restaurantService.findByName(userModificationDto.getRestaurantName());
+            restaurant.addWorker(user);
+        }
+        userRepository.save(user);
+    }
+
+    public void addRestaurantAdmin(SavorlyUser user, Restaurant restaurant) {
+        user.setRole(SavorlyRole.RESTAURANT_ADMIN);
+        restaurant.addWorker(user);
+
+        userRepository.save(user);
+    }
+
+    public void addRestaurantWorker(SavorlyUser user, Restaurant restaurant) {
+        user.setRole(SavorlyRole.RESTAURANT_WORKER);
+        restaurant.addWorker(user);
+
+        userRepository.save(user);
+    }
+
+    public void removeFromRestaurant(SavorlyUser user) {
+        user.setRole(SavorlyRole.USER);
+        user.setRestaurant(null);
 
         userRepository.save(user);
     }

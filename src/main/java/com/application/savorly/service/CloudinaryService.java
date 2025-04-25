@@ -23,11 +23,20 @@ public class CloudinaryService {
                 "api_secret", apiSecret));
     }
 
-    public String uploadImage(MultipartFile file) throws IOException {
-        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("secure_url").toString();
+    public String uploadImage(MultipartFile file, String newFileName) throws IOException {
+        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                "public_id", newFileName,
+                "overwrite", true
+        )).get("secure_url").toString();
     }
 
-    public String uploadPdf(MultipartFile file) throws IOException {
-        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "raw")).get("secure_url").toString();
+    public String uploadPdf(MultipartFile file, String newFileName) throws IOException {
+        String uniqueFileName = newFileName + "-" + System.currentTimeMillis();
+
+        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                "resource_type", "raw",
+                "public_id", uniqueFileName,
+                "overwrite", true
+        )).get("secure_url").toString();
     }
 }

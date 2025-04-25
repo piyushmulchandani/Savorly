@@ -1,8 +1,8 @@
-package com.application.savorly.dto.response;
+package com.application.savorly.dto.create;
 
 import com.application.savorly.domain.catalog.CuisineType;
-import com.application.savorly.domain.catalog.RestaurantStatus;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,21 +14,22 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class RestaurantResponseDto {
+public class RestaurantCreationDto {
 
-    private Long id;
+    @NotBlank
     private String name;
-    private RestaurantStatus status;
+    @NotNull
     private LocalTime openTime;
+    @NotNull
     private LocalTime closeTime;
-    private String imageUrl;
-    private String ownershipProofUrl;
+    @NotNull
     private CuisineType cuisineType;
     private String description;
+    @NotNull
     private String address;
     private String phone;
+    @NotNull
     private String city;
+    @NotNull
     private String country;
-
 }

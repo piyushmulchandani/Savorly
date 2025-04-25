@@ -202,7 +202,7 @@ class UserControllerIT {
     }
 
     @Test
-    @WithMockCustomUser()
+    @WithMockCustomUser(role = "admin")
     void shouldUpdateUser() throws Exception {
         SavorlyUser user = SavorlyUser.builder()
                 .username("updateUser")
@@ -225,7 +225,7 @@ class UserControllerIT {
     }
 
     @Test
-    @WithMockCustomUser
+    @WithMockCustomUser(role = "admin")
     void updateUser_isBadRequest() throws Exception {
         SavorlyUser user = SavorlyUser.builder()
                 .username("updateUser")

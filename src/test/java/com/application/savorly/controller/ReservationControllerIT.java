@@ -77,6 +77,20 @@ class ReservationControllerIT {
         restaurant.addTable(table);
         tableRepository.save(table);
 
+        SavorlyUser user = SavorlyUser.builder()
+                .username("User")
+                .build();
+        userRepository.save(user);
+
+        Reservation reservation = Reservation.builder()
+                .reservationTime(LocalDateTime.of(2025, 4, 1, 12, 0))
+                .numPeople(2)
+                .build();
+        restaurant.addReservation(reservation);
+        table.addReservation(reservation);
+        user.addReservation(reservation);
+        reservationRepository.save(reservation);
+
         MvcResult actual = mockMvc.perform(get("/api/v1/restaurants/reservations/available-times")
                         .queryParam("restaurantId", restaurant.getId().toString())
                         .queryParam("numPeople", Integer.toString(2))

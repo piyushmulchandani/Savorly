@@ -64,7 +64,7 @@ public class UserFacade {
         return userMapper.usersToUserResponses(users);
     }
 
-    @hasAnyRole
+    @hasAdminRole
     public void updateUser(UserModificationDto userModificationDto) {
         if (userModificationDto.getUsername() == null) {
             throw new BadRequestException("Username cannot be empty");

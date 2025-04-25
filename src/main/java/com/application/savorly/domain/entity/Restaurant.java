@@ -1,6 +1,7 @@
 package com.application.savorly.domain.entity;
 
 import com.application.savorly.domain.catalog.CuisineType;
+import com.application.savorly.domain.catalog.RestaurantStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,15 +24,11 @@ public class Restaurant {
     private String name;
 
     @Builder.Default
-    private Boolean isPublic = false;
+    private RestaurantStatus status = RestaurantStatus.REQUESTED;
 
     private LocalTime openTime;
 
     private LocalTime closeTime;
-
-    private String imageUrl;
-
-    private String ownershipProofUrl;
 
     @Enumerated(EnumType.STRING)
     private CuisineType cuisineType;
@@ -45,6 +42,14 @@ public class Restaurant {
     private String city;
 
     private String country;
+
+    private String creator;
+
+    private String imageUrl;
+
+    private String ownershipProofUrl;
+
+    private String rejectionMessage;
 
     @Builder.Default
     @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY)
@@ -61,6 +66,11 @@ public class Restaurant {
     @Builder.Default
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
+
+    public void addWorker(SavorlyUser user) {
+        workers.add(user);
+        user.setRestaurant(this);
+    }
 
     public void addProduct(Product product) {
         products.add(product);
