@@ -113,7 +113,8 @@ class UserControllerIT {
 
         // Mock add and remove role methods
         doNothing().when(roleScopeResource).add(anyList());
-        doNothing().when(roleScopeResource).remove(anyList());    }
+        doNothing().when(roleScopeResource).remove(anyList());
+    }
 
     @Test
     @WithMockCustomUser(username = "newUser")
