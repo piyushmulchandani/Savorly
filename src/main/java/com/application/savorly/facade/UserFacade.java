@@ -52,7 +52,7 @@ public class UserFacade {
 
     @hasRestaurantAdminRole
     public void addWorker(String username, Long restaurantId) {
-        restaurantFacade.checkRestaurantAdminPermission(restaurantId);
+        restaurantFacade.checkRestaurantPermission(restaurantId);
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
         SavorlyUser user = userService.findUserByUsername(username);
 
@@ -71,7 +71,7 @@ public class UserFacade {
 
     @hasRestaurantAdminRole
     public void removeWorker(String username, Long restaurantId) {
-        restaurantFacade.checkRestaurantAdminPermission(restaurantId);
+        restaurantFacade.checkRestaurantPermission(restaurantId);
         SavorlyUser user = userService.findUserByUsername(username);
 
         userService.removeFromRestaurant(user);

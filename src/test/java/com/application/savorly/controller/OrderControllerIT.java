@@ -3,16 +3,11 @@ package com.application.savorly.controller;
 import com.application.savorly.SavorlyApplication;
 import com.application.savorly.config.interfaces.WithMockCustomUser;
 import com.application.savorly.domain.catalog.OrderType;
-import com.application.savorly.domain.entity.Order;
-import com.application.savorly.domain.entity.Product;
-import com.application.savorly.domain.entity.Restaurant;
-import com.application.savorly.domain.entity.Table;
+import com.application.savorly.domain.catalog.SavorlyRole;
+import com.application.savorly.domain.entity.*;
 import com.application.savorly.dto.create.OrderCreationDto;
 import com.application.savorly.dto.response.OrderResponseDto;
-import com.application.savorly.repository.OrderRepository;
-import com.application.savorly.repository.ProductRepository;
-import com.application.savorly.repository.RestaurantRepository;
-import com.application.savorly.repository.TableRepository;
+import com.application.savorly.repository.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -53,6 +48,9 @@ class OrderControllerIT {
     private OrderRepository orderRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TableRepository tableRepository;
 
     @Autowired
@@ -68,6 +66,13 @@ class OrderControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         Table table = Table.builder()
                 .tableNumber(1)
@@ -114,6 +119,13 @@ class OrderControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         Table table = Table.builder()
                 .tableNumber(1)
@@ -269,6 +281,13 @@ class OrderControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         Table table = Table.builder()
                 .tableNumber(1)

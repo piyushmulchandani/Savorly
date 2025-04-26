@@ -11,10 +11,12 @@ import com.application.savorly.repository.RestaurantRepository;
 import com.application.savorly.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.admin.client.resource.*;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,12 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -58,6 +61,59 @@ class UserControllerIT {
 
     @MockitoBean
     private Keycloak keycloak;
+
+    @MockitoBean
+    private RealmResource realmResource;
+
+    @MockitoBean
+    private RolesResource rolesResource;
+
+    @MockitoBean
+    private RoleResource roleResource;
+
+    @MockitoBean
+    private RoleRepresentation roleRepresentation;
+
+    @MockitoBean
+    private UsersResource usersResource;
+
+    @MockitoBean
+    private UserResource userResource;
+
+    @MockitoBean
+    private RoleMappingResource roleMappingResource;
+
+    @MockitoBean
+    private RoleScopeResource roleScopeResource;
+
+    @BeforeEach
+    public void setUp() {
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+
+        // Mock role retrieval
+        when(realmResource.roles()).thenReturn(rolesResource);
+        when(rolesResource.get(anyString())).thenReturn(roleResource);
+        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
+
+        // Mock user search
+        when(realmResource.users()).thenReturn(usersResource);
+
+        UserRepresentation mockUserRepresentation = new UserRepresentation();
+        mockUserRepresentation.setId("user-id-123");
+
+        when(usersResource.search(anyString()))
+                .thenReturn(Collections.singletonList(mockUserRepresentation));
+
+        // Mock getting a specific user
+        when(usersResource.get(anyString())).thenReturn(userResource);
+
+        // Mock user roles management
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+
+        // Mock add and remove role methods
+        doNothing().when(roleScopeResource).add(anyList());
+        doNothing().when(roleScopeResource).remove(anyList());    }
 
     @Test
     @WithMockCustomUser(username = "newUser")

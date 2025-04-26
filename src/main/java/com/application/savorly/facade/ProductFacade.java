@@ -22,16 +22,20 @@ public class ProductFacade {
     private final ProductService productService;
     private final RestaurantService restaurantService;
     private final ProductMapper productMapper;
+    private final RestaurantFacade restaurantFacade;
 
-    public ProductFacade(ProductService productService, RestaurantService restaurantService, ProductMapper productMapper) {
+    public ProductFacade(ProductService productService, RestaurantService restaurantService, ProductMapper productMapper, RestaurantFacade restaurantFacade) {
         this.productService = productService;
         this.restaurantService = restaurantService;
         this.productMapper = productMapper;
+        this.restaurantFacade = restaurantFacade;
     }
 
     @hasRestaurantAdminRole
     public ProductResponseDto addProduct(ProductCreationDto productCreationDto) {
         Restaurant restaurant = restaurantService.getRestaurant(productCreationDto.getRestaurantId());
+        restaurantFacade.checkRestaurantPermission(restaurant.getId());
+
         if (productService.productAlreadyExists(productCreationDto.getRestaurantId(), productCreationDto.getName())) {
             throw new BadRequestException("Product already exists");
         }
@@ -47,6 +51,8 @@ public class ProductFacade {
     @hasRestaurantAdminRole
     public void deleteProduct(Long productId) {
         Product product = productService.findById(productId);
+        restaurantFacade.checkRestaurantPermission(product.getRestaurant().getId());
+
         productService.deleteProduct(product);
     }
 }

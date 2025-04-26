@@ -19,6 +19,9 @@ public class KeycloakConfig {
     @Value("${keycloak.client-id}")
     private String clientId;
 
+    @Value("${keycloak.client-secret}")
+    private String clientSecret;
+
     @Value("${keycloak.admin-username}")
     private String adminUsername;
 
@@ -30,10 +33,11 @@ public class KeycloakConfig {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm(realm)
-                .grantType(OAuth2Constants.PASSWORD)
                 .clientId(clientId)
+                .clientSecret(clientSecret)
                 .username(adminUsername)
                 .password(adminPassword)
+                .grantType(OAuth2Constants.PASSWORD)
                 .build();
     }
 }

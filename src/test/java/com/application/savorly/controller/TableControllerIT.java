@@ -2,14 +2,17 @@ package com.application.savorly.controller;
 
 import com.application.savorly.SavorlyApplication;
 import com.application.savorly.config.interfaces.WithMockCustomUser;
+import com.application.savorly.domain.catalog.SavorlyRole;
 import com.application.savorly.domain.entity.Order;
 import com.application.savorly.domain.entity.Restaurant;
+import com.application.savorly.domain.entity.SavorlyUser;
 import com.application.savorly.domain.entity.Table;
 import com.application.savorly.dto.create.TableCreationDto;
 import com.application.savorly.dto.response.TableResponseDto;
 import com.application.savorly.repository.OrderRepository;
 import com.application.savorly.repository.RestaurantRepository;
 import com.application.savorly.repository.TableRepository;
+import com.application.savorly.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -49,6 +52,9 @@ class TableControllerIT {
     private TableRepository tableRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private RestaurantRepository restaurantRepository;
 
     @Autowired
@@ -61,6 +67,13 @@ class TableControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_ADMIN)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         TableCreationDto tableCreationDto = TableCreationDto.builder()
                 .restaurantId(restaurant.getId())
@@ -110,7 +123,7 @@ class TableControllerIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<TableResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<List<TableResponseDto>>() {
+        List<TableResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
         });
 
         assertThat(response).hasSize(2);
@@ -148,7 +161,7 @@ class TableControllerIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<TableResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<List<TableResponseDto>>() {
+        List<TableResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
         });
 
         assertThat(response).hasSize(1);
@@ -161,6 +174,13 @@ class TableControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         Table table = Table.builder()
                 .tableNumber(0)
@@ -181,6 +201,13 @@ class TableControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         Table table = Table.builder()
                 .occupied(true)
@@ -212,6 +239,13 @@ class TableControllerIT {
                 .name("Restaurant")
                 .build();
         restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_ADMIN)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
 
         Table table1 = Table.builder()
                 .tableNumber(0)

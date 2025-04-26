@@ -58,14 +58,14 @@ public class UserController {
         return userFacade.getAuthenticatedUser();
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<UserResponseDto> getAllUsers(
             @ParameterObject @Valid UserSearchDto userSearchDto
     ) {
         return userFacade.searchUsersBy(userSearchDto);
     }
 
-    @PatchMapping("")
+    @PatchMapping
     public void updateUser(
             @RequestBody UserModificationDto userDto
     ) {

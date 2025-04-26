@@ -73,7 +73,7 @@ public class RestaurantFacade {
 
     @hasRestaurantAdminRole
     public void uploadImage(Long restaurantId, MultipartFile file) {
-        checkRestaurantAdminPermission(restaurantId);
+        checkRestaurantPermission(restaurantId);
         try {
             Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
             String imageUrl = cloudinaryService.uploadImage(file, "ResaurantImage" + restaurantId);
@@ -120,7 +120,7 @@ public class RestaurantFacade {
 
     @hasRestaurantAdminRole
     public RestaurantResponseDto updateRestaurant(Long restaurantId, RestaurantModificationDto restaurantModificationDto) {
-        checkRestaurantAdminPermission(restaurantId);
+        checkRestaurantPermission(restaurantId);
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
 
         restaurantService.updateRestaurant(restaurant, restaurantModificationDto);
@@ -130,14 +130,14 @@ public class RestaurantFacade {
     @Transactional
     @hasRestaurantAdminRole
     public void deleteRestaurant(Long restaurantId) {
-        checkRestaurantAdminPermission(restaurantId);
+        checkRestaurantPermission(restaurantId);
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
         restaurant.getWorkers().forEach(userService::removeFromRestaurant);
 
         restaurantService.deleteRestaurant(restaurant);
     }
 
-    public void checkRestaurantAdminPermission(Long restaurantId) {
+    public void checkRestaurantPermission(Long restaurantId) {
         UserDetails current = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SavorlyUser user = userService.findUserByUsername(current.getUsername());
 

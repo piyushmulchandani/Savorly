@@ -25,17 +25,20 @@ public class TableFacade {
     private final RestaurantService restaurantService;
     private final TableMapper tableMapper;
     private final OrderService orderService;
+    private final RestaurantFacade restaurantFacade;
 
-    public TableFacade(TableService tableService, RestaurantService restaurantService, TableMapper tableMapper, OrderService orderService) {
+    public TableFacade(TableService tableService, RestaurantService restaurantService, TableMapper tableMapper, OrderService orderService, RestaurantFacade restaurantFacade) {
         this.tableService = tableService;
         this.restaurantService = restaurantService;
         this.tableMapper = tableMapper;
         this.orderService = orderService;
+        this.restaurantFacade = restaurantFacade;
     }
 
     @hasRestaurantAdminRole
     public TableResponseDto addTable(TableCreationDto tableCreationDto) {
         Restaurant restaurant = restaurantService.getRestaurant(tableCreationDto.getRestaurantId());
+        restaurantFacade.checkRestaurantPermission(restaurant.getId());
 
         return tableMapper.tableToTableResponseDto(tableService.createTable(restaurant, tableCreationDto));
     }
@@ -48,6 +51,7 @@ public class TableFacade {
     @hasRestaurantRole
     public void occupyTable(Long tableId) {
         Table table = tableService.findById(tableId);
+        restaurantFacade.checkRestaurantPermission(table.getRestaurant().getId());
 
         tableService.occupyTable(table);
     }
@@ -56,6 +60,8 @@ public class TableFacade {
     @hasRestaurantRole
     public void completeTableService(Long tableId) {
         Table table = tableService.findById(tableId);
+        restaurantFacade.checkRestaurantPermission(table.getRestaurant().getId());
+
         List<Order> toDelete = new ArrayList<>(table.getOrders());
 
         tableService.completeTableService(table);
@@ -66,5 +72,6 @@ public class TableFacade {
     @hasRestaurantRole
     public void removeTable(Long restaurantId) {
         tableService.removeTable(restaurantId);
+        restaurantFacade.checkRestaurantPermission(restaurantId);
     }
 }

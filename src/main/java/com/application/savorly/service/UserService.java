@@ -10,20 +10,26 @@ import com.application.savorly.dto.search.UserSearchDto;
 import com.application.savorly.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final Keycloak keycloak;
     private final RestaurantService restaurantService;
+
+    private static final String REALM = "Savorly";
 
     public UserService(UserRepository userRepository, Keycloak keycloak, RestaurantService restaurantService) {
         this.userRepository = userRepository;
@@ -52,8 +58,7 @@ public class UserService {
     }
 
     public void deleteUser(SavorlyUser user) {
-        String realm = "Savorly";
-        UsersResource usersResource = keycloak.realm(realm).users();
+        UsersResource usersResource = keycloak.realm(REALM).users();
         List<UserRepresentation> users = usersResource.search(user.getUsername());
 
         if (!users.isEmpty()) {
@@ -70,18 +75,21 @@ public class UserService {
     }
 
     public void updateUser(SavorlyUser user, UserModificationDto userModificationDto) {
-        if (userModificationDto.getRole() != null) {
-            user.setRole(userModificationDto.getRole());
-        }
         if (userModificationDto.getRestaurantName() != null) {
             Restaurant restaurant = restaurantService.findByName(userModificationDto.getRestaurantName());
             restaurant.addWorker(user);
+        }
+        if (userModificationDto.getRole() != null) {
+            removeRoleFromUser(user.getUsername(), user.getRole().toString());
+            user.setRole(userModificationDto.getRole());
+            assignRoleToUser(user.getUsername(), userModificationDto.getRole().toString());
         }
         userRepository.save(user);
     }
 
     public void addRestaurantAdmin(SavorlyUser user, Restaurant restaurant) {
         user.setRole(SavorlyRole.RESTAURANT_ADMIN);
+        assignRoleToUser(user.getUsername(), SavorlyRole.RESTAURANT_ADMIN.toString());
         restaurant.addWorker(user);
 
         userRepository.save(user);
@@ -89,12 +97,14 @@ public class UserService {
 
     public void addRestaurantWorker(SavorlyUser user, Restaurant restaurant) {
         user.setRole(SavorlyRole.RESTAURANT_WORKER);
+        assignRoleToUser(user.getUsername(), SavorlyRole.RESTAURANT_WORKER.toString());
         restaurant.addWorker(user);
 
         userRepository.save(user);
     }
 
     public void removeFromRestaurant(SavorlyUser user) {
+        removeRoleFromUser(user.getUsername(), user.getRole().toString());
         user.setRole(SavorlyRole.USER);
         user.setRestaurant(null);
 
@@ -114,6 +124,48 @@ public class UserService {
         }
 
         return where;
+    }
+
+    private void assignRoleToUser(String username, String roleName) {
+        RoleRepresentation role = keycloak.realm(REALM)
+                .roles()
+                .get(roleName.toLowerCase())
+                .toRepresentation();
+
+        UserRepresentation user = keycloak.realm(REALM)
+                .users()
+                .search(username)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        keycloak.realm(REALM)
+                .users()
+                .get(user.getId())
+                .roles()
+                .realmLevel()
+                .add(Collections.singletonList(role));
+    }
+
+    private void removeRoleFromUser(String username, String roleName) {
+        RoleRepresentation role = keycloak.realm(REALM)
+                .roles()
+                .get(roleName.toLowerCase())
+                .toRepresentation();
+
+        UserRepresentation user = keycloak.realm(REALM)
+                .users()
+                .search(username)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        keycloak.realm(REALM)
+                .users()
+                .get(user.getId())
+                .roles()
+                .realmLevel()
+                .remove(Collections.singletonList(role));
     }
 }
 

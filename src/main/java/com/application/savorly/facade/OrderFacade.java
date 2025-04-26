@@ -24,17 +24,20 @@ public class OrderFacade {
     private final TableService tableService;
     private final ProductService productService;
     private final OrderMapper orderMapper;
+    private final RestaurantFacade restaurantFacade;
 
-    public OrderFacade(OrderMapper orderMapper, OrderService orderService, TableService tableService, ProductService productService) {
+    public OrderFacade(OrderMapper orderMapper, OrderService orderService, TableService tableService, ProductService productService, RestaurantFacade restaurantFacade) {
         this.orderMapper = orderMapper;
         this.orderService = orderService;
         this.tableService = tableService;
         this.productService = productService;
+        this.restaurantFacade = restaurantFacade;
     }
 
     @hasRestaurantRole
     public OrderResponseDto createOrder(OrderCreationDto orderCreationDto) {
         Table table = tableService.findById(orderCreationDto.getTableId());
+        restaurantFacade.checkRestaurantPermission(table.getRestaurant().getId());
 
         List<Product> products = orderCreationDto.getProductIds().stream()
                 .map(productService::findById)
@@ -52,6 +55,8 @@ public class OrderFacade {
     @hasRestaurantRole
     public void confirmOrder(Long orderId) {
         Order order = orderService.findById(orderId);
+        restaurantFacade.checkRestaurantPermission(order.getTable().getRestaurant().getId());
+
         orderService.confirmOrder(order);
     }
 
@@ -64,6 +69,7 @@ public class OrderFacade {
     @hasRestaurantRole
     public void cancelOrder(Long orderId) {
         Order order = orderService.findById(orderId);
+        restaurantFacade.checkRestaurantPermission(order.getTable().getRestaurant().getId());
 
         BigDecimal orderCost = order.getProducts().stream()
                 .map(Product::getPrice)
