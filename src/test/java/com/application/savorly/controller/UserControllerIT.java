@@ -87,7 +87,7 @@ class UserControllerIT {
     private RoleScopeResource roleScopeResource;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         when(keycloak.realm(anyString())).thenReturn(realmResource);
 
         // Mock role retrieval

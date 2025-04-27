@@ -110,7 +110,7 @@ class RestaurantControllerIT {
     private final LocalTime closeTime = LocalTime.of(21, 0);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         when(keycloak.realm(anyString())).thenReturn(realmResource);
 
         // Mock role retrieval

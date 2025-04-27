@@ -19,6 +19,7 @@ import com.application.savorly.service.CloudinaryService;
 import com.application.savorly.service.RestaurantService;
 import com.application.savorly.service.TableService;
 import com.application.savorly.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -138,8 +139,9 @@ public class RestaurantFacade {
     }
 
     public void checkRestaurantPermission(Long restaurantId) {
-        UserDetails current = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        SavorlyUser user = userService.findUserByUsername(current.getUsername());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        SavorlyUser user = userService.findUserByUsername(username);
 
         if (!SavorlyRole.ADMIN.equals(user.getRole()) && (user.getRestaurant() == null || !restaurantId.equals(user.getRestaurant().getId()))) {
             throw new ForbiddenException("You are not allowed to access this restaurant");

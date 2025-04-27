@@ -22,13 +22,14 @@ public class RestaurantResponseDto {
     private RestaurantStatus status;
     private LocalTime openTime;
     private LocalTime closeTime;
-    private String imageUrl;
-    private String ownershipProofUrl;
     private CuisineType cuisineType;
     private String description;
     private String address;
     private String phone;
     private String city;
     private String country;
+    private String imageUrl;
+    private String ownershipProofUrl;
+    private String rejectionMessage;
 
 }

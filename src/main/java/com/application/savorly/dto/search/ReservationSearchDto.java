@@ -1,5 +1,6 @@
 package com.application.savorly.dto.search;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ReservationSearchDto {
 
+    @NotNull
     private Long restaurantId;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;

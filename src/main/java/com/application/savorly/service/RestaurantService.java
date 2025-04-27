@@ -98,7 +98,7 @@ public class RestaurantService {
             where.and(QRestaurant.restaurant.cuisineType.eq(restaurantSearchDto.getCuisineType()));
         }
         if (restaurantSearchDto.getCity() != null) {
-            where.and(QRestaurant.restaurant.city.eq(restaurantSearchDto.getCity()));
+            where.and(QRestaurant.restaurant.city.equalsIgnoreCase(restaurantSearchDto.getCity()));
         }
 
         return where;
