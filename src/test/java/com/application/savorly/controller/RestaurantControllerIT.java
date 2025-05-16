@@ -113,12 +113,10 @@ class RestaurantControllerIT {
     void setUp() {
         when(keycloak.realm(anyString())).thenReturn(realmResource);
 
-        // Mock role retrieval
         when(realmResource.roles()).thenReturn(rolesResource);
         when(rolesResource.get(anyString())).thenReturn(roleResource);
         when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
 
-        // Mock user search
         when(realmResource.users()).thenReturn(usersResource);
 
         UserRepresentation mockUserRepresentation = new UserRepresentation();
@@ -127,14 +125,11 @@ class RestaurantControllerIT {
         when(usersResource.search(anyString()))
                 .thenReturn(Collections.singletonList(mockUserRepresentation));
 
-        // Mock getting a specific user
         when(usersResource.get(anyString())).thenReturn(userResource);
 
-        // Mock user roles management
         when(userResource.roles()).thenReturn(roleMappingResource);
         when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
 
-        // Mock add and remove role methods
         doNothing().when(roleScopeResource).add(anyList());
         doNothing().when(roleScopeResource).remove(anyList());
     }
@@ -326,6 +321,29 @@ class RestaurantControllerIT {
                         .content(reason)
                         .contentType(MediaType.APPLICATION_JSON)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockCustomUser
+    void getRestaurantById() throws Exception {
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .openTime(openTime)
+                .closeTime(closeTime)
+                .cuisineType(CuisineType.AMERICAN)
+                .status(RestaurantStatus.PRIVATE)
+                .city("Madrid")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        MvcResult actual = mockMvc.perform((get("/api/v1/restaurants/{restaurantId}", restaurant.getId())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        RestaurantResponseDto response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+
+        assertThat(response).isNotNull();
     }
 
     @Test

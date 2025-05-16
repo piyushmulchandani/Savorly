@@ -89,7 +89,7 @@ public class RestaurantService {
         BooleanBuilder where = new BooleanBuilder();
 
         if (restaurantSearchDto.getName() != null) {
-            where.and(QRestaurant.restaurant.name.contains(restaurantSearchDto.getName()));
+            where.and(QRestaurant.restaurant.name.containsIgnoreCase(restaurantSearchDto.getName()));
         }
         if (restaurantSearchDto.getStatus() != null) {
             where.and(QRestaurant.restaurant.status.eq(restaurantSearchDto.getStatus()));

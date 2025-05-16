@@ -85,6 +85,18 @@ public class RestaurantFacade {
         }
     }
 
+    @hasAdminRole
+    public void uploadOwnershipProof(Long restaurantId, MultipartFile file) {
+        try {
+            Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
+            String pdfUrl = cloudinaryService.uploadPdf(file, "ResaurantDocument" + restaurantId);
+            restaurant.setOwnershipProofUrl(pdfUrl);
+            restaurantService.save(restaurant);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
     @Transactional
     @hasAdminRole
     public void acceptRestaurant(Long restaurantId) {
@@ -110,6 +122,11 @@ public class RestaurantFacade {
                 .status(RestaurantStatus.REJECTED)
                 .rejectionMessage(reason).build();
         restaurantService.updateRestaurant(restaurant, restaurantModificationDto);
+    }
+
+    @hasAnyRole
+    public RestaurantResponseDto getRestaurant(Long restaurantId) {
+        return restaurantMapper.restaurantToRestaurantResponseDto(restaurantService.getRestaurant(restaurantId));
     }
 
     @hasAnyRole

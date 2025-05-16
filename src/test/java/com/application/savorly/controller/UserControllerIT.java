@@ -90,12 +90,10 @@ class UserControllerIT {
     void setUp() {
         when(keycloak.realm(anyString())).thenReturn(realmResource);
 
-        // Mock role retrieval
         when(realmResource.roles()).thenReturn(rolesResource);
         when(rolesResource.get(anyString())).thenReturn(roleResource);
         when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
 
-        // Mock user search
         when(realmResource.users()).thenReturn(usersResource);
 
         UserRepresentation mockUserRepresentation = new UserRepresentation();
@@ -104,14 +102,11 @@ class UserControllerIT {
         when(usersResource.search(anyString()))
                 .thenReturn(Collections.singletonList(mockUserRepresentation));
 
-        // Mock getting a specific user
         when(usersResource.get(anyString())).thenReturn(userResource);
 
-        // Mock user roles management
         when(userResource.roles()).thenReturn(roleMappingResource);
         when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
 
-        // Mock add and remove role methods
         doNothing().when(roleScopeResource).add(anyList());
         doNothing().when(roleScopeResource).remove(anyList());
     }
@@ -164,7 +159,7 @@ class UserControllerIT {
                 .build();
         userRepository.save(newWorker);
 
-        mockMvc.perform(post("/api/v1/users/add-worker/{username}", newWorker.getUsername())
+        mockMvc.perform(patch("/api/v1/users/add-worker/{username}", newWorker.getUsername())
                         .queryParam("restaurantId", restaurant.getId().toString()))
                 .andExpect(status().isOk());
 
@@ -195,7 +190,7 @@ class UserControllerIT {
         restaurant.addWorker(newWorker);
         userRepository.save(newWorker);
 
-        mockMvc.perform(post("/api/v1/users/add-worker/{username}", newWorker.getUsername())
+        mockMvc.perform(patch("/api/v1/users/add-worker/{username}", newWorker.getUsername())
                         .queryParam("restaurantId", restaurant.getId().toString()))
                 .andExpect(status().isBadRequest());
     }
@@ -222,7 +217,7 @@ class UserControllerIT {
         restaurant.addWorker(newWorker);
         userRepository.save(newWorker);
 
-        mockMvc.perform(delete("/api/v1/users/remove-worker/{username}", newWorker.getUsername())
+        mockMvc.perform(patch("/api/v1/users/remove-worker/{username}", newWorker.getUsername())
                         .queryParam("restaurantId", restaurant.getId().toString()))
                 .andExpect(status().isOk());
 

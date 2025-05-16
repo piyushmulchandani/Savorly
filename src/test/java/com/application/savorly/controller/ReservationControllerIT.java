@@ -333,7 +333,7 @@ class ReservationControllerIT {
         List<ReservationResponseDto> response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
         });
 
-        assertThat(response).hasSize(1);
+        assertThat(response).hasSize(2);
     }
 
     @Test

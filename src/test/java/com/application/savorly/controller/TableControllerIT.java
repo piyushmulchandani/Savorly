@@ -95,6 +95,40 @@ class TableControllerIT {
     }
 
     @Test
+    @WithMockCustomUser(role = "restaurant_worker")
+    void getTableById() throws Exception {
+
+        Restaurant restaurant = Restaurant.builder()
+                .name("Restaurant")
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        SavorlyUser user = SavorlyUser.builder()
+                .username("Username")
+                .role(SavorlyRole.RESTAURANT_WORKER)
+                .build();
+        restaurant.addWorker(user);
+        userRepository.save(user);
+
+        Table table = Table.builder()
+                .tableNumber(0)
+                .maxPeople(4)
+                .minPeople(3)
+                .build();
+        restaurant.addTable(table);
+        table = tableRepository.save(table);
+
+        MvcResult actual = mockMvc.perform(get("/api/v1/restaurants/tables/{tableId}", table.getId()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        TableResponseDto response = objectMapper.readValue(actual.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+
+        assertThat(response).isNotNull();
+    }
+
+    @Test
     @WithMockCustomUser(role = "restaurant_admin")
     void getAllTables_Unfiltered() throws Exception {
         Restaurant restaurant = Restaurant.builder()

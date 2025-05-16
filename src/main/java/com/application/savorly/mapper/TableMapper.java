@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {OrderMapper.class})
+@Mapper(componentModel = "spring")
 public interface TableMapper {
     TableResponseDto tableToTableResponseDto(Table table);
 

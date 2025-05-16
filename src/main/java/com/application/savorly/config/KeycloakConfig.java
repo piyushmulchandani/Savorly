@@ -34,7 +34,6 @@ public class KeycloakConfig {
                 .serverUrl(serverUrl)
                 .realm(realm)
                 .clientId(clientId)
-                .clientSecret(clientSecret)
                 .username(adminUsername)
                 .password(adminPassword)
                 .grantType(OAuth2Constants.PASSWORD)

@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class UserSearchDto {
     private String username;
     private SavorlyRole role;
-    private String restaurantName;
+    private Long restaurantId;
 }

@@ -60,7 +60,7 @@ public class ProductService {
             where.and(QProduct.product.category.eq(productSearchDto.getCategory()));
         }
         if (productSearchDto.getName() != null) {
-            where.and(QProduct.product.name.contains(productSearchDto.getName()));
+            where.and(QProduct.product.name.containsIgnoreCase(productSearchDto.getName()));
         }
 
         return where;

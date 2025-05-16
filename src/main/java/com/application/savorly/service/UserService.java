@@ -17,8 +17,8 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public void login(SavorlyUser user) {
-        user.setLastLogonDate(new Date());
+        user.setLastLogonDate(LocalDateTime.now());
         userRepository.save(user);
     }
 
@@ -51,8 +51,10 @@ public class UserService {
         SavorlyUser savorlyUser = SavorlyUser.builder()
                 .username(userModificationDto.getUsername())
                 .role(userModificationDto.getRole())
-                .lastLogonDate(new Date())
+                .lastLogonDate(LocalDateTime.now())
                 .build();
+
+        assignRoleToUser(savorlyUser.getUsername(), "USER");
 
         userRepository.save(savorlyUser);
     }
@@ -114,13 +116,13 @@ public class UserService {
     private Predicate getWhere(UserSearchDto userSearchDto) {
         BooleanBuilder where = new BooleanBuilder();
         if (userSearchDto.getUsername() != null) {
-            where.and(QSavorlyUser.savorlyUser.username.contains(userSearchDto.getUsername()));
+            where.and(QSavorlyUser.savorlyUser.username.containsIgnoreCase(userSearchDto.getUsername()));
         }
         if (userSearchDto.getRole() != null) {
             where.and(QSavorlyUser.savorlyUser.role.eq(userSearchDto.getRole()));
         }
-        if (userSearchDto.getRestaurantName() != null) {
-            where.and((QSavorlyUser.savorlyUser.restaurant.name.contains(userSearchDto.getRestaurantName())));
+        if (userSearchDto.getRestaurantId() != null) {
+            where.and((QSavorlyUser.savorlyUser.restaurant.id.eq(userSearchDto.getRestaurantId())));
         }
 
         return where;

@@ -28,7 +28,6 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
                 )
-                // Disable CSRF (stateless APIs typically do not require CSRF protection)
                 .csrf(AbstractHttpConfigurer::disable)
 
                 // Authorize requests to require authentication for any request
@@ -41,7 +40,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(jwtAuthConverter) // Use custom converter
-                        ) // Configuring JWT support (JWT decoder, etc.)
+                        )
                 )
 
                 // Stateless session management (no sessions created)
@@ -49,7 +48,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // Disable X-Frame-Options to allow H2 console in an iframe
+                // Disable Options to allow H2 console in an iframe
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                 );
@@ -60,10 +59,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("http://localhost:4200");  // Allow frontend from localhost
-        corsConfig.addAllowedMethod("*");  // Allow all methods (GET, POST, PUT, DELETE, etc.)
+        corsConfig.addAllowedOrigin("http://localhost:4200");// Allow frontend from localhost
+        corsConfig.addAllowedMethod("*");  // Allow all methods
         corsConfig.addAllowedHeader("*");  // Allow all headers
-        corsConfig.setAllowCredentials(true);  // Allow credentials (cookies, JWT tokens)
+        corsConfig.setAllowCredentials(true);  // Allow credentials
 
         // Applying the configuration globally
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();

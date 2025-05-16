@@ -40,6 +40,14 @@ public class RestaurantController {
         restaurantFacade.uploadImage(restaurantId, file);
     }
 
+    @PostMapping("/upload-document/{restaurantId}")
+    public void uploadOwnershipProof(
+            @PathVariable Long restaurantId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        restaurantFacade.uploadOwnershipProof(restaurantId, file);
+    }
+
     @PostMapping("/accept/{restaurantId}")
     public void acceptRestaurantCreation(
             @PathVariable Long restaurantId
@@ -53,6 +61,13 @@ public class RestaurantController {
             @RequestBody String reason
     ) {
         restaurantFacade.rejectRestaurant(restaurantId, reason);
+    }
+
+    @GetMapping("/{restaurantId}")
+    public RestaurantResponseDto getRestaurant(
+            @PathVariable Long restaurantId
+    ) {
+        return restaurantFacade.getRestaurant(restaurantId);
     }
 
     @GetMapping

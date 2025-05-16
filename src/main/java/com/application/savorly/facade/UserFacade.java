@@ -85,7 +85,7 @@ public class UserFacade {
         return userMapper.userToUserResponse(userService.findUserByUsername(username));
     }
 
-    @hasAdminRole
+    @hasRestaurantAdminRole
     public List<UserResponseDto> searchUsersBy(UserSearchDto userSearchDto) {
         List<SavorlyUser> users = userService.searchUsersBy(userSearchDto);
 

@@ -29,7 +29,7 @@ public class UserController {
         userFacade.login(username);
     }
 
-    @PostMapping("/add-worker/{username}")
+    @PatchMapping("/add-worker/{username}")
     public void addWorker(
             @PathVariable String username,
             @RequestParam Long restaurantId
@@ -45,7 +45,7 @@ public class UserController {
         userFacade.deleteUser(username);
     }
 
-    @DeleteMapping("/remove-worker/{username}")
+    @PatchMapping("/remove-worker/{username}")
     public void removeWorker(
             @PathVariable String username,
             @RequestParam Long restaurantId

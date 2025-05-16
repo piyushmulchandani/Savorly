@@ -36,7 +36,7 @@ public class OrderFacade {
 
     @hasRestaurantRole
     public OrderResponseDto createOrder(OrderCreationDto orderCreationDto) {
-        Table table = tableService.findById(orderCreationDto.getTableId());
+        Table table = tableService.findByTableNumber(orderCreationDto.getRestaurantId(), orderCreationDto.getTableNumber());
         restaurantFacade.checkRestaurantPermission(table.getRestaurant().getId());
 
         List<Product> products = orderCreationDto.getProductIds().stream()

@@ -16,7 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderCreationDto {
     @NotNull
-    private Long tableId;
+    private Long restaurantId;
+    @NotNull
+    private Integer tableNumber;
     @NotNull
     private OrderType type;
     @NotEmpty

@@ -7,6 +7,10 @@ import com.application.savorly.facade.TableFacade;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +33,13 @@ public class TableController {
         return tableFacade.addTable(tableCreationDto);
     }
 
+    @GetMapping("/{tableId}")
+    public TableResponseDto getTable(
+            @PathVariable Long tableId
+    ) {
+        return tableFacade.getTable(tableId);
+    }
+
     @GetMapping
     public List<TableResponseDto> getTables(
             @ParameterObject TableSearchDto tableSearchDto
@@ -44,10 +55,15 @@ public class TableController {
     }
 
     @PatchMapping("/complete/{tableId}")
-    public void completeTableService(
+    public ResponseEntity<byte[]> completeTableService(
             @PathVariable Long tableId
     ) {
-        tableFacade.completeTableService(tableId);
+        //TODO make this better
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "receipt-table-" + tableId + ".pdf");
+
+        return new ResponseEntity<>(tableFacade.completeTableService(tableId), headers, HttpStatus.OK);
     }
 
     @DeleteMapping("/{restaurantId}")

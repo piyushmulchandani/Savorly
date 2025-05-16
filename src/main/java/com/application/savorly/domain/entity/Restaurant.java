@@ -24,6 +24,7 @@ public class Restaurant {
     private String name;
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.REQUESTED;
 
     private LocalTime openTime;
@@ -33,6 +34,7 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private CuisineType cuisineType;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String address;

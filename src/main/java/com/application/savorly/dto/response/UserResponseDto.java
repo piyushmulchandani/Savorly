@@ -7,8 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -20,7 +19,6 @@ public class UserResponseDto {
     private String username;
     private SavorlyRole role;
     private RestaurantResponseDto restaurant;
-    private Date lastLogonDate;
-    private List<ReservationResponseDto> reservations;
+    private LocalDateTime lastLogonDate;
 
 }

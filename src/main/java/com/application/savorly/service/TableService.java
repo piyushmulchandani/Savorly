@@ -31,6 +31,11 @@ public class TableService {
                 .orElseThrow(() -> new NotFoundException("Table not found with id: " + tableId));
     }
 
+    public Table findByTableNumber(Long restaurantId, int tableNumber) {
+        return tableRepository.findByTableNumberAndRestaurant_Id(tableNumber, restaurantId)
+                .orElseThrow(() -> new NotFoundException("Table not found in restaurant " + restaurantId + " with table number " + tableNumber));
+    }
+
     public Table createTable(Restaurant restaurant, TableCreationDto tableCreationDto) {
         int nextTableNumber = Optional.ofNullable(
                         tableRepository.findMaxTableNumberByRestaurantId(restaurant.getId()))

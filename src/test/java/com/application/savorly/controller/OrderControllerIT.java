@@ -88,7 +88,8 @@ class OrderControllerIT {
         product = productRepository.save(product);
 
         OrderCreationDto orderCreationDto = OrderCreationDto.builder()
-                .tableId(table.getId())
+                .restaurantId(restaurant.getId())
+                .tableNumber(table.getTableNumber())
                 .type(OrderType.RESTAURANT)
                 .productIds(List.of(product.getId()))
                 .build();

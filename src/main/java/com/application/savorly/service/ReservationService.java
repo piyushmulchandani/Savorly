@@ -46,8 +46,8 @@ public class ReservationService {
                     .anyMatch(table -> table.getReservations().stream()
                             .noneMatch(reservation -> {
                                 LocalTime resStart = LocalTime.from(reservation.getReservationTime());
-                                LocalTime resEnd = resStart.plusMinutes(90);
-                                return !(finalTime.plusMinutes(90).isBefore(resStart) || finalTime.isAfter(resEnd));
+                                LocalTime resEnd = resStart.plusMinutes(89);
+                                return !(finalTime.plusMinutes(89).isBefore(resStart) || finalTime.isAfter(resEnd));
                             }));
 
             if (anyTableAvailable) {
@@ -82,7 +82,7 @@ public class ReservationService {
             where.and(QReservation.reservation.restaurant.id.eq(reservationSearchDto.getRestaurantId()));
         }
         if (reservationSearchDto.getUsername() != null) {
-            where.and(QReservation.reservation.user.username.eq(reservationSearchDto.getUsername()));
+            where.and(QReservation.reservation.user.username.containsIgnoreCase(reservationSearchDto.getUsername()));
         }
         if (reservationSearchDto.getDate() != null) {
             LocalDate date = reservationSearchDto.getDate();

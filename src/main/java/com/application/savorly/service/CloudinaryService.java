@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class CloudinaryService {
@@ -31,12 +32,20 @@ public class CloudinaryService {
     }
 
     public String uploadPdf(MultipartFile file, String newFileName) throws IOException {
-        String uniqueFileName = newFileName + "-" + System.currentTimeMillis();
+        String uniqueFileName = newFileName;
+        if (!uniqueFileName.toLowerCase().endsWith(".pdf")) {
+            uniqueFileName += ".pdf";
+        }
+        uniqueFileName += "-" + System.currentTimeMillis();
 
-        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "resource_type", "raw",
-                "public_id", uniqueFileName,
+        Map<String, Object> params = ObjectUtils.asMap(
+                "resource_type", "auto",
+                "public_id", uniqueFileName.replace(".pdf", ""),
                 "overwrite", true
-        )).get("secure_url").toString();
+        );
+
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), params);
+
+        return uploadResult.get("secure_url").toString();
     }
 }

@@ -3,9 +3,10 @@ package com.application.savorly.domain.entity;
 import com.application.savorly.domain.catalog.SavorlyRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -27,7 +28,8 @@ public class SavorlyUser {
     @Enumerated(EnumType.STRING)
     private SavorlyRole role = SavorlyRole.USER;
 
-    private Date lastLogonDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime lastLogonDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")

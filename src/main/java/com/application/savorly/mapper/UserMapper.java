@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {RestaurantMapper.class, ReservationMapper.class})
+@Mapper(componentModel = "spring", uses = {RestaurantMapper.class})
 public interface UserMapper {
     UserResponseDto userToUserResponse(SavorlyUser user);
 
