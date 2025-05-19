@@ -219,7 +219,7 @@ class ReservationControllerIT {
         tableRepository.save(table);
 
         Reservation reservation = Reservation.builder()
-                .reservationTime(LocalDateTime.of(2025, 4, 1, 7, 45))
+                .reservationTime(LocalDateTime.of(2025, 8, 1, 7, 45))
                 .numPeople(2)
                 .build();
         restaurant.addReservation(reservation);
@@ -228,7 +228,7 @@ class ReservationControllerIT {
         reservationRepository.save(reservation);
 
         reservation = Reservation.builder()
-                .reservationTime(LocalDateTime.of(2025, 4, 2, 7, 45))
+                .reservationTime(LocalDateTime.of(2025, 8, 2, 7, 45))
                 .numPeople(2)
                 .build();
         restaurant.addReservation(reservation);
