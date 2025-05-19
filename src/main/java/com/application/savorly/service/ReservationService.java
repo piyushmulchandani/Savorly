@@ -10,6 +10,7 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,9 @@ public class ReservationService {
             where.and(QReservation.reservation.reservationTime.year().eq(date.getYear()));
             where.and(QReservation.reservation.reservationTime.month().eq(date.getMonthValue()));
             where.and(QReservation.reservation.reservationTime.dayOfMonth().eq(date.getDayOfMonth()));
+        } else {
+            LocalDateTime now = LocalDateTime.now();
+            where.and(QReservation.reservation.reservationTime.after(now));
         }
 
         return where;
